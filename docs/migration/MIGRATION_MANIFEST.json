@@ -1,0 +1,82 @@
+{
+  "schema_version": 1,
+  "migration": "LLM A-B Tests vault executable surface to dedicated Developer repository",
+  "created_at": "2026-07-26T12:27:32+02:00",
+  "source_vault_path": "/Users/busera/Obsidian/obs_BFB/4_Projects/PA Development/LLM A-B Tests",
+  "target_repository": "/Users/busera/Developer/pa-model-benchmarks",
+  "pre_migration_backup": "/Users/busera/Temp/Hermes/change-backups/20260726_122732_llm-ab-tests-developer-migration/LLM A-B Tests",
+  "scope": {
+    "scripts_source": {
+      "algorithm": "sha256(sorted(relative_path + NUL + file_sha256 + LF))",
+      "files": 39,
+      "bytes": 799371,
+      "tree_sha256": "b1f9e775f3f730141f9d914a6115c591dec05a1dac24d69fab4e70976f24ab38"
+    },
+    "scripts_target_after_portability_changes": {
+      "algorithm": "sha256(sorted(relative_path + NUL + file_sha256 + LF))",
+      "files": 34,
+      "bytes": 583380,
+      "tree_sha256": "0cd4e46a20f0646088cfa91896a2a1f6eb1c9a5cd8cd07d6ea0f732284121b9c"
+    },
+    "artifacts_source": {
+      "algorithm": "sha256(sorted(relative_path + NUL + file_sha256 + LF))",
+      "files": 11150,
+      "bytes": 46995194,
+      "tree_sha256": "71eeb3d530b0ba23f664611c1b29b9d4fc39ff0a8f89c5b745a9be0ece132236"
+    },
+    "artifacts_copy": {
+      "algorithm": "sha256(sorted(relative_path + NUL + file_sha256 + LF))",
+      "files": 11150,
+      "bytes": 46995194,
+      "tree_sha256": "71eeb3d530b0ba23f664611c1b29b9d4fc39ff0a8f89c5b745a9be0ece132236"
+    },
+    "prompt_guides_source": {
+      "algorithm": "sha256(sorted(relative_path + NUL + file_sha256 + LF))",
+      "files": 18,
+      "bytes": 127104,
+      "tree_sha256": "0acedc47a946a8623b85012429118d5f14b59d6601cf042e6e5245b6928a0a56"
+    },
+    "prompt_guides_copy": {
+      "algorithm": "sha256(sorted(relative_path + NUL + file_sha256 + LF))",
+      "files": 18,
+      "bytes": 127104,
+      "tree_sha256": "0acedc47a946a8623b85012429118d5f14b59d6601cf042e6e5245b6928a0a56"
+    },
+    "scripts_initial_copy_verified_before_portability_changes": true,
+    "scripts_current_differs_intentionally": true,
+    "artifacts_source_matches_artifacts_copy": true,
+    "prompt_guides_source_matches_prompt_guides_copy": true
+  },
+  "authority": {
+    "developer": "executable source, tests, fixtures, prompt snapshots, technical manifests, local artifacts",
+    "obsidian": "human decisions, benchmark index, interpreted reports, project notes"
+  },
+  "deletion": "none; original executable surfaces archived outside the vault",
+  "archived_original_surface": "/Users/busera/_Archive/PA Model Benchmarks/vault-executable-surface-20260726_123531",
+  "archive_counts": {
+    "scripts_files_including_runtime_caches": 114,
+    "artifacts_files": 11150
+  },
+  "verification_before_final_review": {
+    "pre_review_working_tree_pytest": "131 passed in 3.28s",
+    "pre_review_staged_clean_export_pytest": "131 passed in 3.20s",
+    "clean_export_tree_before_evidence_record": "32238f166eca60831ea53be1e5047ed514ed3bbe",
+    "compile": "passed",
+    "self_tests": "D/R/W/F/X/T/tool-live/coding passed with zero model calls",
+    "git_diff_check": "passed",
+    "ad_hoc": "passed: transport, truncation, gate, scheduling, progress, guide hashing, portability, staged scope",
+    "secret_pattern_hits": 0,
+    "verifier_archive": "/Users/busera/Temp/Hermes/change-backups/20260726_122732_llm-ab-tests-developer-migration/verification/hermes-verify-8esw7b0b.py",
+    "post_review_working_tree_pytest": "140 passed",
+    "post_review_remediation": [
+      "affirmative Ollama completion required",
+      "Hermes maximum-iteration output fails closed",
+      "Hermes request-only identity is diagnostic and promotion-ineligible",
+      "run roots and manifests reject overwrite and stale output",
+      "Real-Life Pack promotion requires at least three complete repeats",
+      "tracked fixtures are synthetic and contain no named personal profile contracts or copied exact private values",
+      "Daily-Use manifest is immutable before preflight provider calls"
+    ],
+    "final_staged_evidence": "pending exact-tree rerun"
+  }
+}

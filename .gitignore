@@ -1,0 +1,22 @@
+.DS_Store
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*.bak
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+_backups/
+artifacts/
+workspaces/
+*.tmp
+*.log
+*.stdout
+*.stderr
+
+# Release evidence is allow-listed separately from generated run output.
+!evidence/
+!evidence/releases/
+!evidence/releases/**
