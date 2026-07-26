@@ -2,12 +2,12 @@
 
 ## Current state
 
-- **Status:** Active; daily local-vs-cloud benchmark complete; no candidate promoted unattended.
+- **Status:** Active; daily local-vs-cloud benchmark complete; MB-002 held-out pack complete; no candidate promoted unattended.
 - **Executable authority:** `/Users/busera/Developer/pa-model-benchmarks`; Obsidian is the human decision/report authority.
 - **Hardening release state:** complete. Exact tree `22fe57499450b749271569fd1137b22e3659cc2e` passed independent review with no P0/P1/P2 findings and was bound as initial commit `7ad9413e41184ff90061efa32f975d3989ce8906`.
 - **Last reviewed:** 2026-07-26.
 - **Current focused verification:** exact reviewed tree passed `140` tests in both working-tree and clean-export runs, compilation, eight runner self-tests, and the targeted ad-hoc verifier before commit binding.
-- **Next-session outcome:** MB-002 T01–T03 (held-out daily task pack) are implemented and verified; T04 (local candidate execution) is the remaining outcome. The held-out contract is frozen at `docs/held-out/2026-07-26 MB-002 Held-Out Daily Task Pack Contract.md` and results remain separate from D01–D14 calibration.
+- **Next-session outcome:** MB-002 is complete (T01–T04). Next outcomes are MB-003 (synthetic local tool-live execution) and MB-004 (D07 held-out diagnosis). The held-out contract, evidence, and validator findings are documented under `docs/held-out/`.
 - **Current decision architecture:** D/R/W/F/T/X lane separation with fail-closed required-lane gates; no universal winner score.
 - **Programme boundary:** the D/R/W/F/T/X/tool-live PA Model Benchmark and the separate Coding Model Benchmark are governed independently; lessons may transfer, but results and promotion authority do not.
 - **Daily cloud routing:** Kimi K2.6 provisional for reviewed low-risk interaction; Nemotron 3 Ultra consistency challenger.
@@ -41,7 +41,7 @@
 
 ## Next execution priorities
 
-1. Execute MB-002 T04 from `DO_NEXT_SESSION.md`: run the frozen held-out pack against selected local models with model-major repeated trials; record evidence or document the exact runtime blocker.
+1. Execute MB-003 (synthetic local tool-live execution) or MB-004 (D07 held-out diagnosis) from the Obsidian backlog.
 2. Run the synthetic tool-live suite against Qwen3.6 27B MLX BF16 in an isolated local sandbox.
 3. Diagnose D07 with explicit skill injection, then test any remediation on unchanged held-out D07 variants.
 4. Measure sustained memory pressure and energy cost before recommending frequent local use.
