@@ -34,10 +34,12 @@ def test_tracked_fixtures_use_synthetic_subjects_without_named_profile_contracts
     profiles = importlib.import_module("model_prompt_profiles")
     assert "synthetic user" in profiles.BASE_PA_CONTRACT
     for name in (
+        "pa_daily_use_benchmark",
         "pa_real_life_pack_benchmark",
         "pa_typical_workload_benchmark",
         "pa_conflict_retrieval_benchmark",
         "pa_extended_capability_benchmark",
+        "pa_held_out_benchmark",
     ):
         module = importlib.import_module(name)
         assert "synthetic" in module.SYSTEM.lower()
@@ -52,6 +54,7 @@ def test_active_runner_roots_resolve_to_repository():
         "pa_extended_capability_benchmark",
         "local_coding_breakpoint_benchmark",
         "iphone_ai_coach_coding_benchmark_profiled",
+        "pa_held_out_benchmark",
     ):
         module = importlib.import_module(name)
         assert module.BASE_DIR == REPO

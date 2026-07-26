@@ -1,5 +1,15 @@
 # Changelog — LLM A-B Tests
 
+## 2026-07-26 — MB-002 Held-out daily task pack (T01–T03)
+
+- Frozen held-out contract (`docs/held-out/2026-07-26 MB-002 Held-Out Daily Task Pack Contract.md`) defining six materially distinct daily PA tasks: H01 batch de-duplication, H02 time estimation, H03 scope creep detection, H04 contradictory rule resolution, H05 error acknowledgment, H06 delegation routing.
+- Implemented `scripts/pa_held_out_benchmark.py` with validators, manifest integration, model-major repeated trials, separate `held_out_gate` (≥0.85 weighted, zero critical failures, ≥90% JSON exact), and fail-closed incomplete/error/unverified classification.
+- Added 34 focused tests in `scripts/test_pa_held_out_benchmark.py` covering valid/invalid validators, reasoning leakage, schema enforcement, gate logic, transport failure classification, immutability, and separation from D01–D14 calibration.
+- Added privacy/leakage/portability proof: generic structural checks for synthetic subjects, no real names/paths/values, validator/lane disjointness from all existing D/R/W/F/T/X tasks, source-hash manifest inclusion, and tracked-artifact exclusion.
+- Updated `scripts/test_repository_portability.py` to include the held-out runner in synthetic-subject and root-resolution checks.
+- Held-out results remain a separate evidence namespace and cannot alter D01–D14 promotion gates.
+- Verification: 174 working-tree tests, 174 clean-export tests, self-test pass, compilation pass, `git diff --check` clean.
+
 ## 2026-07-26 — Initial governed repository release
 
 - Exact staged tree `22fe57499450b749271569fd1137b22e3659cc2e` passed independent release review with P0/P1/P2 all zero.

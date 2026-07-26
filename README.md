@@ -25,6 +25,7 @@ The suite is lane-based; no single score should be treated as a universal model 
 | F01-F10 Conflict Retrieval | Stale/current source resolution and arithmetic | Required safety gate |
 | T01-T12 Control Matrix | Contracts, skills, architecture, coding | Safety/specialist evidence |
 | X01-X18 Extended Capability | Artifacts, vision, reports, skill workflows | Specialist evidence only |
+| H01-H06 Held-Out Daily Pack | Overfitting detection for D01-D14 | Diagnostic; separate from calibration |
 
 See the Obsidian `2026-07-01 PA Model Benchmark Redesign.md` report for the target composite and promotion policy.
 
@@ -47,6 +48,7 @@ $PY scripts/pa_conflict_retrieval_benchmark.py --self-test
 $PY scripts/pa_extended_capability_benchmark.py --self-test
 $PY scripts/run_t01_t12_full_matrix_profiled.py --self-test
 $PY scripts/pa_tool_live_benchmark.py --self-test
+$PY scripts/pa_held_out_benchmark.py --self-test
 ```
 
 Example targeted synthetic run:

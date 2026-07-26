@@ -7,7 +7,7 @@
 - **Hardening release state:** complete. Exact tree `22fe57499450b749271569fd1137b22e3659cc2e` passed independent review with no P0/P1/P2 findings and was bound as initial commit `7ad9413e41184ff90061efa32f975d3989ce8906`.
 - **Last reviewed:** 2026-07-26.
 - **Current focused verification:** exact reviewed tree passed `140` tests in both working-tree and clean-export runs, compilation, eight runner self-tests, and the targeted ad-hoc verifier before commit binding.
-- **Next-session outcome:** MB-002 held-out daily task pack is `next-up`; its contract/labels must be frozen before implementation results are inspected, and local candidate execution follows only after T01–T03 pass.
+- **Next-session outcome:** MB-002 T01–T03 (held-out daily task pack) are implemented and verified; T04 (local candidate execution) is the remaining outcome. The held-out contract is frozen at `docs/held-out/2026-07-26 MB-002 Held-Out Daily Task Pack Contract.md` and results remain separate from D01–D14 calibration.
 - **Current decision architecture:** D/R/W/F/T/X lane separation with fail-closed required-lane gates; no universal winner score.
 - **Programme boundary:** the D/R/W/F/T/X/tool-live PA Model Benchmark and the separate Coding Model Benchmark are governed independently; lessons may transfer, but results and promotion authority do not.
 - **Daily cloud routing:** Kimi K2.6 provisional for reviewed low-risk interaction; Nemotron 3 Ultra consistency challenger.
@@ -15,6 +15,7 @@
 
 ## Implemented foundations
 
+- Held-out daily task pack (`pa_held_out_benchmark.py`): six materially distinct tasks (H01–H06) covering batch de-duplication, time estimation, scope creep, rule conflict resolution, error acknowledgment, and delegation routing. Separate `held_out_gate` (≥0.85 weighted, zero critical failures, ≥90% JSON exact); results cannot alter D01–D14 promotion gates. Validators were defined from task specifications alone, not from candidate outputs.
 - Shared field-scoped semantic checks reject wrong selected sources, stale-source acceptance, forbidden values in the decision field, malformed schemas, contradictions, and keyword stuffing patterns.
 - All R/W/F/X/T runners support deterministic repeated-trial scheduling with repeat identity, model-major execution inside each trial, balanced/random/fixed order, pass rates, variance, and approximate 95% confidence intervals. Balanced mode rotates model order between trials.
 - Shared Ollama request construction uses top-level `keep_alive: "30m"` to reduce eviction/reload artifacts while keeping model-family sampling controls under `options`.
@@ -40,7 +41,7 @@
 
 ## Next execution priorities
 
-1. Execute MB-002 from `DO_NEXT_SESSION.md`: freeze and review its held-out task/label contract, then implement and verify without using candidate results to tune validators.
+1. Execute MB-002 T04 from `DO_NEXT_SESSION.md`: run the frozen held-out pack against selected local models with model-major repeated trials; record evidence or document the exact runtime blocker.
 2. Run the synthetic tool-live suite against Qwen3.6 27B MLX BF16 in an isolated local sandbox.
 3. Diagnose D07 with explicit skill injection, then test any remediation on unchanged held-out D07 variants.
 4. Measure sustained memory pressure and energy cost before recommending frequent local use.
