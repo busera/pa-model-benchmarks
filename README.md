@@ -99,6 +99,7 @@ $PY scripts/pa_tool_live_benchmark.py --execute --model qwen3.6:27b-mlx
 
 ## Documentation
 
+- `DO_NEXT_SESSION.md` — executable continuation front door and sole next-session objective.
 - `PROJECT_STATE.md` — current status, risks, and next actions.
 - `CHANGELOG.md` — suite changes.
 - Dated design and result notes — historical evidence; do not silently rewrite old results.

@@ -7,6 +7,7 @@
 - **Hardening release state:** complete. Exact tree `22fe57499450b749271569fd1137b22e3659cc2e` passed independent review with no P0/P1/P2 findings and was bound as initial commit `7ad9413e41184ff90061efa32f975d3989ce8906`.
 - **Last reviewed:** 2026-07-26.
 - **Current focused verification:** exact reviewed tree passed `140` tests in both working-tree and clean-export runs, compilation, eight runner self-tests, and the targeted ad-hoc verifier before commit binding.
+- **Next-session outcome:** MB-002 held-out daily task pack is `next-up`; its contract/labels must be frozen before implementation results are inspected, and local candidate execution follows only after T01–T03 pass.
 - **Current decision architecture:** D/R/W/F/T/X lane separation with fail-closed required-lane gates; no universal winner score.
 - **Programme boundary:** the D/R/W/F/T/X/tool-live PA Model Benchmark and the separate Coding Model Benchmark are governed independently; lessons may transfer, but results and promotion authority do not.
 - **Daily cloud routing:** Kimi K2.6 provisional for reviewed low-risk interaction; Nemotron 3 Ultra consistency challenger.
@@ -39,7 +40,7 @@
 
 ## Next execution priorities
 
-1. Build a held-out daily task pack not used in validator calibration.
+1. Execute MB-002 from `DO_NEXT_SESSION.md`: freeze and review its held-out task/label contract, then implement and verify without using candidate results to tune validators.
 2. Run the synthetic tool-live suite against Qwen3.6 27B MLX BF16 in an isolated local sandbox.
 3. Diagnose D07 with explicit skill injection, then test any remediation on unchanged held-out D07 variants.
 4. Measure sustained memory pressure and energy cost before recommending frequent local use.
