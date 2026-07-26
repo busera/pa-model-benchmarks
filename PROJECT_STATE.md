@@ -7,7 +7,7 @@
 - **Hardening release state:** complete. Exact tree `22fe57499450b749271569fd1137b22e3659cc2e` passed independent review with no P0/P1/P2 findings and was bound as initial commit `7ad9413e41184ff90061efa32f975d3989ce8906`.
 - **Last reviewed:** 2026-07-26.
 - **Current focused verification:** exact reviewed tree passed `140` tests in both working-tree and clean-export runs, compilation, eight runner self-tests, and the targeted ad-hoc verifier before commit binding.
-- **Next-session outcome:** MB-002 is complete (T01–T04). Next outcomes are MB-003 (synthetic local tool-live execution) and MB-004 (D07 held-out diagnosis). The held-out contract, evidence, and validator findings are documented under `docs/held-out/`.
+- **Next-session outcome:** MB-002 v2 is complete (T01–T04, all P0 findings resolved). Next outcomes are MB-003 (synthetic local tool-live execution) and MB-004 (D07 held-out diagnosis). The v2 held-out contract, evidence, and validator findings are documented under `docs/held-out/`.
 - **Current decision architecture:** D/R/W/F/T/X lane separation with fail-closed required-lane gates; no universal winner score.
 - **Programme boundary:** the D/R/W/F/T/X/tool-live PA Model Benchmark and the separate Coding Model Benchmark are governed independently; lessons may transfer, but results and promotion authority do not.
 - **Daily cloud routing:** Kimi K2.6 provisional for reviewed low-risk interaction; Nemotron 3 Ultra consistency challenger.
