@@ -77,6 +77,10 @@
       "tracked fixtures are synthetic and contain no named personal profile contracts or copied exact private values",
       "Daily-Use manifest is immutable before preflight provider calls"
     ],
-    "final_staged_evidence": "pending exact-tree rerun"
+    "final_staged_evidence": {
+      "tree": "22fe57499450b749271569fd1137b22e3659cc2e",
+      "independent_review": "PASS; P0=0, P1=0, P2=0",
+      "initial_commit": "7ad9413e41184ff90061efa32f975d3989ce8906"
+    }
   }
 }

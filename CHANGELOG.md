@@ -1,5 +1,12 @@
 # Changelog — LLM A-B Tests
 
+## 2026-07-26 — Initial governed repository release
+
+- Exact staged tree `22fe57499450b749271569fd1137b22e3659cc2e` passed independent release review with P0/P1/P2 all zero.
+- Bound the reviewed tree as initial commit `7ad9413e41184ff90061efa32f975d3989ce8906`.
+- Established `PA Model Benchmark Backlog.md` in Obsidian as the single product-lifecycle authority; project state remains implementation evidence rather than a competing backlog.
+- Reconciled benchmark-related PA Development cards without duplication: product-specific health, RSS, memory, runtime, and backlog-advisor outcomes retain their existing owners.
+
 ## 2026-07-26 — dedicated Developer repository migration
 
 - Established `/Users/busera/Developer/pa-model-benchmarks` as executable authority and retained Obsidian as human decision/report authority.
@@ -8,7 +15,7 @@
 - Prompt-guide snapshots are repository-owned and source-hashed in run manifests.
 - Added programme boundaries, canonical `pyproject.toml` test configuration, generated-artifact ignores, migration manifest, and clean-export portability tests.
 - Moved the previous vault executable surface to `/Users/busera/_Archive/PA Model Benchmarks/vault-executable-surface-20260726_123531`; no permanent deletion.
-- Verification after independent-review remediation: working tree `140 passed`; clean-export and targeted ad-hoc verification are rerun against the final staged tree before release binding.
+- Verification after independent-review remediation: exact reviewed tree passed `140` tests in both working-tree and clean-export runs, compilation, eight runner self-tests, and targeted ad-hoc verification before release binding.
 
 ## 2026-07-26 — PA Model Benchmark hardening from transferable coding lessons
 

@@ -4,6 +4,8 @@ Benchmark suite for selecting local Ollama, Ollama Cloud, and primary cloud mode
 
 Executable authority: `/Users/busera/Developer/pa-model-benchmarks`. Human routing decisions, interpreted reports, and the benchmark index remain in the Obsidian folder documented by `OBSIDIAN_AUTHORITY.md`.
 
+Product backlog authority: `4_Projects/PA Development/LLM A-B Tests/PA Model Benchmark Backlog.md` in the Obsidian vault. `PROJECT_STATE.md` records implementation evidence and immediate execution order; it is not a second lifecycle backlog.
+
 ## Two distinct benchmark programmes
 
 - **PA Model Benchmark Test Suite:** the D/R/W/F/T/X and tool-live lanes documented here. It evaluates broad Hermes PA behaviour, safety, retrieval, daily work, artifacts, and tool integration.

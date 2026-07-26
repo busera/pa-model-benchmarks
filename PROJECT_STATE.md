@@ -4,9 +4,9 @@
 
 - **Status:** Active; daily local-vs-cloud benchmark complete; no candidate promoted unattended.
 - **Executable authority:** `/Users/busera/Developer/pa-model-benchmarks`; Obsidian is the human decision/report authority.
-- **Hardening release state:** migrated and verified in the dedicated repository and staged clean export; independent review and Git binding remain pending.
+- **Hardening release state:** complete. Exact tree `22fe57499450b749271569fd1137b22e3659cc2e` passed independent review with no P0/P1/P2 findings and was bound as initial commit `7ad9413e41184ff90061efa32f975d3989ce8906`.
 - **Last reviewed:** 2026-07-26.
-- **Current focused verification:** working tree `140 passed` after independent-review remediation; final staged clean export, self-tests, and targeted ad-hoc verification remain to bind the release tree.
+- **Current focused verification:** exact reviewed tree passed `140` tests in both working-tree and clean-export runs, compilation, eight runner self-tests, and the targeted ad-hoc verifier before commit binding.
 - **Current decision architecture:** D/R/W/F/T/X lane separation with fail-closed required-lane gates; no universal winner score.
 - **Programme boundary:** the D/R/W/F/T/X/tool-live PA Model Benchmark and the separate Coding Model Benchmark are governed independently; lessons may transfer, but results and promotion authority do not.
 - **Daily cloud routing:** Kimi K2.6 provisional for reviewed low-risk interaction; Nemotron 3 Ultra consistency challenger.
@@ -39,13 +39,14 @@
 
 ## Next execution priorities
 
-1. Complete independent review and the initial scoped Git commit.
-2. Build a held-out daily task pack not used in validator calibration.
-3. Run the synthetic tool-live suite against Qwen3.6 27B MLX BF16 in an isolated local sandbox.
-4. Diagnose D07 with explicit skill injection, then test any remediation on unchanged held-out D07 variants.
-5. Measure sustained memory pressure and energy cost before recommending frequent local use.
-6. Keep private/cloud tool-live payloads opt-in and synthetic/redacted.
-7. Keep semantic/content routing decommissioned. Use role/profile dispatch for model selection and introduce deterministic source-aware privacy controls only for concrete workflows that require them. See the retired evidence in [[2026-07-19 PA Semantic Model Router Benchmark and Implementation Plan]].
+1. Build a held-out daily task pack not used in validator calibration.
+2. Run the synthetic tool-live suite against Qwen3.6 27B MLX BF16 in an isolated local sandbox.
+3. Diagnose D07 with explicit skill injection, then test any remediation on unchanged held-out D07 variants.
+4. Measure sustained memory pressure and energy cost before recommending frequent local use.
+5. Keep private/cloud tool-live payloads opt-in and synthetic/redacted.
+6. Keep semantic/content routing decommissioned. Use role/profile dispatch for model selection and introduce deterministic source-aware privacy controls only for concrete workflows that require them. See the retired evidence in [[2026-07-19 PA Semantic Model Router Benchmark and Implementation Plan]].
+
+Lifecycle ownership and the full five-part contracts for these outcomes live in the Obsidian `PA Model Benchmark Backlog.md`; do not duplicate their status here or in the global PA Development board.
 
 ## Promotion rule
 
