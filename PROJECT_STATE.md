@@ -2,16 +2,17 @@
 
 ## Current state
 
-- **Status:** Active; daily local-vs-cloud benchmark complete; MB-002 held-out pack complete; no candidate promoted unattended.
+- **Status:** Active; MB-002 v2.1 held-out pack and the 14-model local/cloud execution are complete. No candidate passed the unattended held-out gate; Andrew approved a bounded quota-continuity fallback chain with reviewed outputs.
 - **Executable authority:** `/Users/busera/Developer/pa-model-benchmarks`; Obsidian is the human decision/report authority.
 - **Hardening release state:** complete. Exact tree `22fe57499450b749271569fd1137b22e3659cc2e` passed independent review with no P0/P1/P2 findings and was bound as initial commit `7ad9413e41184ff90061efa32f975d3989ce8906`.
 - **Last reviewed:** 2026-07-26.
-- **Current focused verification:** exact reviewed tree passed `140` tests in both working-tree and clean-export runs, compilation, eight runner self-tests, and the targeted ad-hoc verifier before commit binding.
-- **Next-session outcome:** MB-002 v2 is complete (T01–T04, all P0 findings resolved). Next outcomes are MB-003 (synthetic local tool-live execution) and MB-004 (D07 held-out diagnosis). The v2 held-out contract, evidence, and validator findings are documented under `docs/held-out/`.
+- **Current focused verification:** `185` tests pass after v2.1 hardening. Full held-out run `20260726-held-out-full` completed `252/252` cells (`14` models × `6` tasks × `3` repeats) with no transport/runtime failures. `deepseek-v3.2:cloud` was excluded after preflight returned HTTP 410 Gone.
+- **Next-session outcome:** MB-003 (synthetic local tool-live execution) remains the next governed outcome; MB-004 (D07 held-out diagnosis) follows. MB-002 v2.1 artifacts and evidence are under `docs/held-out/` and `artifacts/20260726-held-out-full/`.
 - **Current decision architecture:** D/R/W/F/T/X lane separation with fail-closed required-lane gates; no universal winner score.
 - **Programme boundary:** the D/R/W/F/T/X/tool-live PA Model Benchmark and the separate Coding Model Benchmark are governed independently; lessons may transfer, but results and promotion authority do not.
-- **Daily cloud routing:** Kimi K2.6 provisional for reviewed low-risk interaction; Nemotron 3 Ultra consistency challenger.
-- **Daily local routing:** Qwen3.6 27B MLX BF16 is quality-first and Qwen3.6 27B MLX latency-first for bounded reviewed private work. Both failed D07 in all three observations and are blocked from unattended files, messages, deletion, cron, and skills. See `2026-07-19 PA Daily-Use Local vs Cloud Ollama Benchmark Report.md`.
+- **Approved quota-continuity routing (2026-07-26):** keep `openai-codex/gpt-5.6-sol` as primary. On primary-route failure, use `ollama-cloud/deepseek-v4-pro:cloud` (L1), then `ollama-cloud/nemotron-3-ultra:cloud` (L1b), then local `qwen3.6:27b-mlx-bf16` through the named `custom:local-ollama` endpoint (L2). This is an operational continuity decision, not unattended broad-model promotion.
+- **Daily cloud conclusion:** DeepSeek V4 Pro led the held-out run (`0.9882`, `100%` JSON exact, one critical vendor-routing miss). Nemotron 3 Ultra is the safer consistency challenger (`0.9803`, zero critical failures; systematic H02 deadline-risk omission). Kimi K2.6 is demoted from the provisional broad fallback (`0.7462`, five critical failures, `77.8%` JSON exact).
+- **Daily local conclusion:** Qwen3.6 27B MLX BF16 remains the quality-first general local fallback (`0.9672`, one critical miss, `100%` JSON exact). Gemma4 31B MLX remains the bounded coding/reviewer specialist rather than the broad local fallback (`0.9449`, three critical misses). Qwen3.6 27B MLX remains latency-first for reviewed private interaction. No local model is approved for unattended files, messages, deletion, cron, or high-impact skills.
 
 ## Implemented foundations
 

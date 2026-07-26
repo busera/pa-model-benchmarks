@@ -1,5 +1,13 @@
 # Changelog — LLM A-B Tests
 
+## 2026-07-26 — Full held-out roster and approved continuity routing
+
+- Executed the v2.1 held-out pack against 14 promising local/Ollama Cloud models with three balanced repeats: 252/252 cells completed with no transport or runtime failures.
+- DeepSeek V4 Pro led (`0.9882`, one critical failure); Nemotron 3 Ultra was second (`0.9803`, zero critical failures); Qwen3.6 27B MLX BF16 was the strongest local general candidate (`0.9672`, one critical failure).
+- No model passed the unattended held-out gate. Failures were reviewed against raw responses and retained as genuine model/contract failures rather than infrastructure failures.
+- `deepseek-v3.2:cloud` failed preflight with HTTP 410 Gone and was excluded before execution.
+- Andrew approved a bounded quota-continuity route: OpenAI Codex/GPT-5.6-Sol primary → DeepSeek V4 Pro cloud → Nemotron 3 Ultra cloud → Qwen3.6 27B MLX BF16 local. Kimi K2.6 is demoted from provisional broad fallback. Gemma4 31B MLX remains a bounded local coding/reviewer specialist.
+
 ## 2026-07-26 — MB-002 v2 Held-out daily task pack (all P0 fixes, T01–T04)
 
 - v2 contract frozen at `docs/held-out/2026-07-26 MB-002 v2 Held-Out Daily Task Pack Contract.md` after independent review of v1 found 5 P0 issues.
