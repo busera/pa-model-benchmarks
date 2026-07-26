@@ -1,15 +1,12 @@
 # Changelog — LLM A-B Tests
 
-## 2026-07-26 — MB-002 Held-out daily task pack (T01–T04 complete)
+## 2026-07-26 — MB-002 v2 Held-out daily task pack (all P0 fixes, T01–T04)
 
-- Frozen held-out contract (`docs/held-out/2026-07-26 MB-002 Held-Out Daily Task Pack Contract.md`) defining six materially distinct daily PA tasks: H01 batch de-duplication, H02 time estimation, H03 scope creep detection, H04 contradictory rule resolution, H05 error acknowledgment, H06 delegation routing.
-- Implemented `scripts/pa_held_out_benchmark.py` with validators, manifest integration, model-major repeated trials, separate `held_out_gate` (≥0.85 weighted, zero critical failures, ≥90% JSON exact), and fail-closed incomplete/error/unverified classification.
-- Added 34 focused tests in `scripts/test_pa_held_out_benchmark.py` covering valid/invalid validators, reasoning leakage, schema enforcement, gate logic, transport failure classification, immutability, and separation from D01–D14 calibration.
-- Added privacy/leakage/portability proof: generic structural checks for synthetic subjects, no real names/paths/values, validator/lane disjointness from all existing D/R/W/F/T/X tasks, source-hash manifest inclusion, and tracked-artifact exclusion.
-- Updated `scripts/test_repository_portability.py` to include the held-out runner in synthetic-subject and root-resolution checks.
-- T04 local evidence: ran 3-repeat balanced trials against `qwen3.6:27b-mlx-bf16` and `qwen3.6:27b-mlx`. Both failed the held-out gate (0.78 and 0.7725 weighted; 5 and 6 critical failures). 100% JSON exact rate; all 36 cells completed with `done=true`. Results are diagnostic overfitting evidence and do not alter D01–D14 promotion gates.
-- Validator precision findings documented for future pack versioning (H03 `unsafe_deletion_without_approval` boolean check; H02 `invented_time` substring matching). Frozen contract was not edited after candidate observation.
-- Evidence: 174 working-tree tests, 174 clean-export tests, self-test pass, compilation pass, `git diff --check` clean. T04 manifest hashes verified against frozen pack.
+- v2 contract frozen at `docs/held-out/2026-07-26 MB-002 v2 Held-Out Daily Task Pack Contract.md` after independent review of v1 found 5 P0 issues.
+- P0 fixes: H04 uses novel content-management rules (no D07/T10 archive/DELETE leakage); H01 uses 'overdue' not 'discard_past'; H02 uses word-boundary regex for 'all' check; H03 prompt asks model to determine scope without telling it which items are expanded; full scoring table with per-failure severity/score-cap/critical-flag frozen before implementation.
+- Complete T-lane overlap matrix added (T01–T12 from `legacy_t_matrix/wave2.py`).
+- 42 focused tests covering all v2 validators, D07/T10 leakage prevention, word-boundary matching, boolean approval handling, and privacy/portability.
+- v1 contract and T04 evidence remain as historical artifacts; v2 supersedes v1 for overfitting detection.
 
 ## 2026-07-26 — Initial governed repository release
 
