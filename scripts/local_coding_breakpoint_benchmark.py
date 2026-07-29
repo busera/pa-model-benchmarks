@@ -556,6 +556,8 @@ def _run_hidden_tests(workspace: Path, goal: Goal) -> tuple[bool, dict[str, Any]
     test_dir = workspace / "_hidden_tests"
     test_dir.mkdir(parents=True, exist_ok=True)
     (test_dir / "test_goal.py").write_text(goal.hidden_tests, encoding="utf-8")
+    pytest_config = workspace / "pytest.ini"
+    pytest_config.write_text("[pytest]\n", encoding="utf-8")
     temp_dir = workspace / "_tmp"
     temp_dir.mkdir(exist_ok=True)
     if not SANDBOX_EXEC.is_file():
@@ -568,12 +570,13 @@ def _run_hidden_tests(workspace: Path, goal: Goal) -> tuple[bool, dict[str, Any]
         "PYTEST_DISABLE_PLUGIN_AUTOLOAD": "1",
     }
     command = [
-        str(SANDBOX_EXEC), "-p", _sandbox_profile(workspace), PYTHON, "-m", "pytest", "-q", str(test_dir),
+        str(SANDBOX_EXEC), "-p", _sandbox_profile(workspace), PYTHON, "-m", "pytest", "-q",
+        "-c", "pytest.ini", "_hidden_tests",
         "-o", f"cache_dir={workspace / '_pytest_cache'}",
     ]
     try:
         result = subprocess.run(
-            command, cwd=Path("/"), capture_output=True, text=True, timeout=120, check=False, env=env,
+            command, cwd=workspace, capture_output=True, text=True, timeout=120, check=False, env=env,
         )
     except subprocess.TimeoutExpired as exc:
         return False, {"sandbox": "seatbelt", "test_timeout": 120, "stdout": (exc.stdout or "")[-2000:]}, ["TEST_TIMEOUT"]

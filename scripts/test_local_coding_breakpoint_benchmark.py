@@ -621,6 +621,27 @@ def test_hidden_tests_execute_in_filesystem_and_network_sandbox(tmp_path: Path):
     assert passed is True, (checks, hard_fails)
 
 
+def test_hidden_tests_do_not_discover_parent_pytest_configuration(tmp_path: Path):
+    m = load_module()
+    parent = tmp_path / "repository"
+    parent.mkdir()
+    (parent / "pyproject.toml").write_text(
+        "[tool.pytest.ini_options]\naddopts = '--definitely-invalid-option'\n",
+        encoding="utf-8",
+    )
+    workspace = parent / "artifacts" / "run" / "cell" / "workspace"
+    workspace.mkdir(parents=True)
+    (workspace / "solution.py").write_text("VALUE = 1\n", encoding="utf-8")
+    goal = m.Goal(
+        "config-isolation", 0, "config isolation", "config isolation",
+        ("solution.py",), (), "from solution import VALUE\ndef test_value(): assert VALUE == 1\n", 100,
+    )
+
+    passed, checks, hard_fails = m._run_hidden_tests(workspace, goal)
+
+    assert passed is True, (checks, hard_fails)
+
+
 def test_provider_metrics_and_effective_prompt_provenance(tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
     m = load_module()
     assert m.provider_capabilities("gpt-5.6-sol") == {"token_usage_available": False, "output_budget_enforced": False}
