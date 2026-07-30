@@ -18,7 +18,7 @@ Authority: PA routing and workload-fit evidence only. Promotion requires lane-sp
 
 Entrypoints:
 
-- `scripts/local_coding_breakpoint_benchmark.py`
+- `scripts/coding_workspace_benchmark.py` — format-neutral raw/fenced per-file workspace execution with bounded test-feedback correction
 - `scripts/iphone_ai_coach_coding_benchmark_profiled.py`
 
 Supporting goal/scorer sources:
@@ -27,6 +27,8 @@ Supporting goal/scorer sources:
 - `scripts/pa_derived_coding_goals.py`
 
 Authority: coding complexity, generated-code, sandbox, hidden-test, and coding routing evidence only.
+
+The retired strict-JSON breakpoint producer is preserved under `scripts/_Archive/legacy_coding_breakpoint/`. Its monolithic/atomized JSON-envelope results are historical and are not comparable to workspace-mode (`W`) evidence.
 
 ## Shared infrastructure
 

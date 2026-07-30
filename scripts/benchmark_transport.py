@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import json
+import re
 import subprocess
 import urllib.error
 from dataclasses import dataclass
@@ -127,19 +128,23 @@ def parse_hermes_response(
     """Parse Hermes CLI text while preserving its explicit telemetry limits."""
     kept: list[str] = []
     reached_max_turns = False
-    for line in (stdout or "").splitlines():
+    for line in (stdout or "").splitlines(keepends=True):
         stripped = line.strip()
         if stripped.startswith("session_id:"):
             continue
-        if "Reached maximum iterations" in stripped:
+        if re.search(
+            r"(?:reached\s+maximum\s+(?:iterations|turns)|maximum\s+(?:iterations|turns)\s+reached)",
+            stripped,
+            flags=re.IGNORECASE,
+        ):
             reached_max_turns = True
             continue
         kept.append(line)
-    content = "\n".join(kept).strip()
+    content = "".join(kept).strip()
     if reached_max_turns:
         incomplete_reason = "max_iterations_reached"
         completion_evidence = "max_iterations_warning"
-    elif not content:
+    elif not content.strip():
         incomplete_reason = "empty_response"
         completion_evidence = "process_exit_only"
     else:

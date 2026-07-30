@@ -52,7 +52,7 @@ def test_active_runner_roots_resolve_to_repository():
         "pa_typical_workload_benchmark",
         "pa_conflict_retrieval_benchmark",
         "pa_extended_capability_benchmark",
-        "local_coding_breakpoint_benchmark",
+        "coding_workspace_benchmark",
         "iphone_ai_coach_coding_benchmark_profiled",
         "pa_held_out_benchmark",
     ):

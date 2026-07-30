@@ -9,7 +9,7 @@ Product backlog authority: `4_Projects/PA Development/LLM A-B Tests/PA Model Ben
 ## Two distinct benchmark programmes
 
 - **PA Model Benchmark Test Suite:** the D/R/W/F/T/X and tool-live lanes documented here. It evaluates broad Hermes PA behaviour, safety, retrieval, daily work, artifacts, and tool integration.
-- **Coding Model Benchmark Test Suite:** the separate coding-complexity/breakpoint programme centered on `scripts/local_coding_breakpoint_benchmark.py`. It evaluates code generation and deterministic hidden tests.
+- **Coding Model Benchmark Test Suite:** the separate coding-complexity programme centered on `scripts/coding_workspace_benchmark.py`. It assigns one host-selected file per call, accepts ordinary raw or fenced Python, writes into an isolated workspace, and evaluates compilation plus deterministic hidden tests across up to three total workspace passes (the initial attempt plus at most two test-feedback corrections). The retired strict-JSON producer is archived under `scripts/_Archive/legacy_coding_breakpoint/`.
 
 Lessons may transfer between harnesses, but results, promotion gates, reports, and evidence authority do not. A coding-model score cannot promote a PA default, and PA-suite hardening must not rewrite coding-suite authority.
 
@@ -49,7 +49,19 @@ $PY scripts/pa_extended_capability_benchmark.py --self-test
 $PY scripts/run_t01_t12_full_matrix_profiled.py --self-test
 $PY scripts/pa_tool_live_benchmark.py --self-test
 $PY scripts/pa_held_out_benchmark.py --self-test
+$PY scripts/coding_workspace_benchmark.py --self-test --run-id offline-coding-workspace
 ```
+
+Example format-neutral coding run:
+
+```bash
+$PY scripts/coding_workspace_benchmark.py \
+  --models qwen3.6:27b-mlx-bf16 \
+  --modes W --tiers C0,C1,C2 \
+  --run-id coding-workspace-example
+```
+
+Coding workspace evidence is version-distinct from historical strict-JSON monolithic/atomized results. Do not merge or directly rank those scores.
 
 Example targeted synthetic run:
 
