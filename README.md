@@ -49,7 +49,7 @@ $PY scripts/pa_extended_capability_benchmark.py --self-test
 $PY scripts/run_t01_t12_full_matrix_profiled.py --self-test
 $PY scripts/pa_tool_live_benchmark.py --self-test
 $PY scripts/pa_held_out_benchmark.py --self-test
-$PY scripts/coding_workspace_benchmark.py --self-test --run-id offline-coding-workspace
+$PY scripts/coding_workspace_benchmark.py --self-test
 ```
 
 Example format-neutral coding run:
@@ -57,8 +57,7 @@ Example format-neutral coding run:
 ```bash
 $PY scripts/coding_workspace_benchmark.py \
   --models qwen3.6:27b-mlx-bf16 \
-  --modes W --tiers C0,C1,C2 \
-  --run-id coding-workspace-example
+  --modes W --tiers C0,C1,C2
 ```
 
 Coding workspace evidence is version-distinct from historical strict-JSON monolithic/atomized results. Do not merge or directly rank those scores.

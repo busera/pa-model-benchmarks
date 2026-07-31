@@ -43,7 +43,7 @@
 
 ## Next execution priorities
 
-1. Execute MB-003 (synthetic local tool-live execution) or MB-004 (D07 held-out diagnosis) from the Obsidian backlog.
+1. Execute MB-003 (synthetic local tool-live execution) as the sole active next-session objective. Keep MB-004 (D07 held-out diagnosis) deferred in the Obsidian backlog until MB-003 is closed.
 2. Run the synthetic tool-live suite against Qwen3.6 27B MLX BF16 in an isolated local sandbox.
 3. Diagnose D07 with explicit skill injection, then test any remediation on unchanged held-out D07 variants.
 4. Measure sustained memory pressure and energy cost before recommending frequent local use.
