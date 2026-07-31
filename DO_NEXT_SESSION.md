@@ -13,7 +13,7 @@ Execute **MB-003 — Synthetic local tool-live execution** as the sole active ou
 
 - Repository: `/Users/busera/Developer/pa-model-benchmarks`
 - Branch: `main`
-- Last verified executable-code baseline commit: `afbd55d` (227 tests); documentation-only commits may follow.
+- Last pre-split executable-code baseline commit: `afbd55d`; verify the current PA-only test count rather than expecting the former combined-suite count.
 - Product backlog: `/Users/busera/Obsidian/obs_BFB/4_Projects/PA Development/LLM A-B Tests/PA Model Benchmark Backlog.md`
 - Executable authority: this repository
 - Human decision/report authority: `/Users/busera/Obsidian/obs_BFB/4_Projects/PA Development/LLM A-B Tests/`
@@ -29,7 +29,7 @@ Execute **MB-003 — Synthetic local tool-live execution** as the sole active ou
    4. `README.md`, especially the tool-live integration gate section;
    5. `scripts/pa_tool_live_benchmark.py` and its test file;
    6. `docs/held-out/2026-07-26 MB-002 T04 Local Candidate Evidence.md` — for context on local model performance.
-3. Run `/opt/homebrew/Caskroom/miniconda/base/envs/claude-skills/bin/python3 -m pytest -q` before implementation and confirm the baseline remains green (227 tests expected).
+3. Run `/opt/homebrew/Caskroom/miniconda/base/envs/claude-skills/bin/python3 -m pytest -q` before implementation and confirm the current PA-only baseline remains green.
 
 ## Completed state — do not repeat
 
@@ -55,7 +55,7 @@ Execute **MB-003 — Synthetic local tool-live execution** as the sole active ou
 
 ## Required verification
 
-- Baseline: `/opt/homebrew/Caskroom/miniconda/base/envs/claude-skills/bin/python3 -m pytest -q` (227 tests expected).
+- Baseline: `/opt/homebrew/Caskroom/miniconda/base/envs/claude-skills/bin/python3 -m pytest -q` (current PA-only suite must pass).
 - Tool-live self-test: `python3 scripts/pa_tool_live_benchmark.py` (no model calls).
 - Tool-live execution: `python3 scripts/pa_tool_live_benchmark.py --execute --model qwen3.6:27b-mlx-bf16`.
 - `git diff --check` and exact staged-scope inspection.

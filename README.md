@@ -6,10 +6,10 @@ Executable authority: `/Users/busera/Developer/pa-model-benchmarks`. Human routi
 
 Product backlog authority: `4_Projects/PA Development/LLM A-B Tests/PA Model Benchmark Backlog.md` in the Obsidian vault. `PROJECT_STATE.md` records implementation evidence and immediate execution order; it is not a second lifecycle backlog.
 
-## Two distinct benchmark programmes
+## Programme boundary
 
 - **PA Model Benchmark Test Suite:** the D/R/W/F/T/X and tool-live lanes documented here. It evaluates broad Hermes PA behaviour, safety, retrieval, daily work, artifacts, and tool integration.
-- **Coding Model Benchmark Test Suite:** the separate coding-complexity programme centered on `scripts/coding_workspace_benchmark.py`. It assigns one host-selected file per call, accepts ordinary raw or fenced Python, writes into an isolated workspace, and evaluates compilation plus deterministic hidden tests across up to three total workspace passes (the initial attempt plus at most two test-feedback corrections). The retired strict-JSON producer is archived under `scripts/_Archive/legacy_coding_breakpoint/`.
+- **Coding Model Benchmark Test Suite:** moved to `/Users/busera/Developer/Benchmark Coding`. That project owns coding runners, prompts, tests, artifacts, reports, and coding-route evidence.
 
 Lessons may transfer between harnesses, but results, promotion gates, reports, and evidence authority do not. A coding-model score cannot promote a PA default, and PA-suite hardening must not rewrite coding-suite authority.
 
@@ -49,18 +49,7 @@ $PY scripts/pa_extended_capability_benchmark.py --self-test
 $PY scripts/run_t01_t12_full_matrix_profiled.py --self-test
 $PY scripts/pa_tool_live_benchmark.py --self-test
 $PY scripts/pa_held_out_benchmark.py --self-test
-$PY scripts/coding_workspace_benchmark.py --self-test
 ```
-
-Example format-neutral coding run:
-
-```bash
-$PY scripts/coding_workspace_benchmark.py \
-  --models qwen3.6:27b-mlx-bf16 \
-  --modes W --tiers C0,C1,C2
-```
-
-Coding workspace evidence is version-distinct from historical strict-JSON monolithic/atomized results. Do not merge or directly rank those scores.
 
 Example targeted synthetic run:
 
@@ -89,7 +78,7 @@ Every D/R/W/F/T/X run claims a fresh, empty run root and writes schema-v1 `manif
 9. Native PA cells distinguish transport, provider process/contract/identity, unsupported route, strict-format, validator, and incomplete outcomes. Read retained stderr/raw responses before attributing a failure to model quality.
 10. PA JSON recovery may support diagnostics, but recovery warnings remain hard failures and never count as strict contract compliance. The PA suite has no repair pass; any future PA agent-repair lane must report first-pass and repaired success separately.
 11. Early-stop saves spend only. Skipped cells remain incomplete/ineligible and never become model failures or full-suite evidence.
-12. PA output budgets remain task-specific. Native Ollama cells retain requested caps, token counts, and stop reason; token caps, `done=false`, and missing completion telemetry become incomplete evidence before validation. Coding-artifact budgets are governed by the separate Coding Model Benchmark suite.
+12. PA output budgets remain task-specific. Native Ollama cells retain requested caps, token counts, and stop reason; token caps, `done=false`, and missing completion telemetry become incomplete evidence before validation. Coding-artifact budgets are governed by `/Users/busera/Developer/Benchmark Coding`.
 13. Hermes CLI output is parsed before validation. Maximum-iteration warnings become incomplete cells. The CLI does not expose returned-model identity, so otherwise complete Hermes cells retain diagnostic scores but carry `route_identity_unverified`, use `status=unverified`, and cannot pass promotion gates.
 14. The Real-Life Pack requires at least three repeats before `promotion_gate=pass`; one-repeat runs remain diagnostic even with complete, perfect-scoring coverage.
 

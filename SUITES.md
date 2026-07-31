@@ -16,22 +16,10 @@ Authority: PA routing and workload-fit evidence only. Promotion requires lane-sp
 
 ## Coding Model Benchmark Test Suite
 
-Entrypoints:
-
-- `scripts/coding_workspace_benchmark.py` — format-neutral raw/fenced per-file workspace execution with bounded test-feedback correction
-- `scripts/iphone_ai_coach_coding_benchmark_profiled.py`
-
-Supporting goal/scorer sources:
-
-- `scripts/local_coding_promotion_goals.py`
-- `scripts/pa_derived_coding_goals.py`
-
-Authority: coding complexity, generated-code, sandbox, hidden-test, and coding routing evidence only.
-
-The retired strict-JSON breakpoint producer is preserved under `scripts/_Archive/legacy_coding_breakpoint/`. Its monolithic/atomized JSON-envelope results are historical and are not comparable to workspace-mode (`W`) evidence.
+Coding benchmark authority is `/Users/busera/Developer/Benchmark Coding`. This PA repository does not own coding runners, hidden tests, generated-code artifacts, interpreted coding reports, or coding-route promotion.
 
 ## Shared infrastructure
 
-Scheduling, prompt profiles, manifests, transport classification, and decision post-processing may be shared. Results, repair behavior, hidden tests, promotion gates, and routing authority may not be transferred between programmes.
+Prompt guides and generic manifest/transport patterns may be independently retained where each programme needs them. Results, repair behavior, hidden tests, promotion gates, and routing authority may not be transferred between programmes.
 
 A report or artifact must identify its programme explicitly. Neither programme's result supersedes the other's report.

@@ -1,4 +1,11 @@
-# Changelog — LLM A-B Tests
+# Changelog
+
+## 2026-07-31 — coding programme moved to dedicated project
+
+- Moved coding-only runners, tests, promotion goals, archived predecessor source, generated coding artifacts, and interpreted coding reports to `/Users/busera/Developer/Benchmark Coding`.
+- Retained ignored compatibility symlinks for moved artifact roots so historical report paths continue to resolve; the symlink targets are the canonical project artifacts.
+- Retained shared model guides and generic manifest/transport/profile modules here because the PA suite still depends on them.
+- This repository now owns PA D/R/W/F/T/X/tool-live evidence only; coding-route evidence and future coding reports belong to the dedicated project.
 
 ## 2026-07-30 — Format-neutral coding workspace benchmark
 
