@@ -34,7 +34,7 @@ See the Obsidian `2026-07-01 PA Model Benchmark Redesign.md` report for the targ
 - `2026-07-19 PA Daily-Use Local vs Cloud Ollama Benchmark Report.md` — canonical same-surface local-vs-cloud comparison.
 - `2026-07-19 PA Daily-Use Cloud Model Benchmark Report.md` — cloud screen and stability evidence.
 
-Current decision: Kimi K2.6 is the reviewed low-risk cloud route; Qwen3.6 27B MLX BF16 is the reviewed local quality route; Qwen3.6 27B MLX is the reviewed local latency route. No model is approved as an unattended broad daily default.
+Current bounded quota-continuity chain: `openai-codex/gpt-5.6-sol` → `ollama-cloud/deepseek-v4-pro:cloud` → `ollama-cloud/nemotron-3-ultra:cloud` → local `qwen3.6:27b-mlx-bf16`. Qwen3.6 27B MLX remains the reviewed latency-first local route. No model is approved as an unattended broad daily default.
 
 ## Quick verification
 
