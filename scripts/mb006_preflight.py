@@ -32,6 +32,7 @@ FROZEN_REGISTRATION = {
     "gemma4:31b-cloud": {"digest": "c382fbfbc73b", "registration": "ollama_list_metadata_only"},
     "deepseek-v4-pro:cloud": {"digest": "22bfd5026abd", "registration": "ollama_list_metadata_only"},
     "qwen3.6:27b-mlx-bf16": {"digest": "2ae7c58c2cf4", "registration": "ollama_list_metadata_only"},
+    "qwen3.6:35b-a3b-coding-mxfp8": {"digest": "ccbab0f4045b", "registration": "ollama_list_metadata_only"},
 }
 FROZEN_SERIAL_SCHEDULE = [
     "deepseek-v4-flash:0731-cloud",
@@ -40,6 +41,7 @@ FROZEN_SERIAL_SCHEDULE = [
     "gemma4:31b-cloud",
     "deepseek-v4-pro:cloud",
     "qwen3.6:27b-mlx-bf16",
+    "qwen3.6:35b-a3b-coding-mxfp8",
 ]
 
 
