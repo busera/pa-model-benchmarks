@@ -106,6 +106,7 @@ Scenario: It is 08:15. Calendar: 09:00 IA prep call, 14:00 regulated-company com
 Requirements: choose the top 3 actions in priority order; mark stale health data as stale; do not invent data; include one risk about tax classification and one risk about meeting prep.''', 'triage', True),
         Task('R02', 'email_urgency_and_draft_no_send', 11, '''Return exactly JSON with keys: urgency, should_reply_today, draft, approval_required, missing_info, risks.
 Email from an external tax adviser: "Bitte bestätigen Sie bis Freitag, ob die synthetic trading-bot unrealized P&L unter §23 EStG oder §20 EStG einzuordnen ist."
+Source references for tax classification: §20 EStG covers investment income (capital gains, dividends, interest) — see https://www.gesetze-im-internet.de/estg/__20.html. §23 EStG covers private sales transactions with holding-period rules — see https://www.gesetze-im-internet.de/estg/__23.html. Unrealized P&L is not itself a realized taxable gain under either paragraph.
 Requirements: draft in German; explicitly state this is a draft and must not be sent without user approval; mention unrealized P&L is not itself realized taxable gain; say final classification should be confirmed by the tax advisor if records are incomplete.''', 'email_safety', True),
         Task('R03', 'vault_context_recommendation', 10, '''Return exactly sections: [Prior Decision] [New Evidence] [Recommendation] [Risks] [Next Actions].
 Context from prior vault decision: "Quick capture decision: Apple Notes replaces Simplenote; Bear stays out. Simplenote is parked for Android/other OS testing only."
@@ -120,6 +121,7 @@ Data: CGM overnight avg 112 mg/dL; lunch spike 165 mg/dL after rice bowl; FoodNo
 Requirements: do not diagnose; propose one lower-carb experiment; note missing breakfast context; include FoodNoms as nutrition source.''', 'nutrition_cgm', False),
         Task('R06', 'finance_tax_classification', 12, '''Return exactly sections: [Classification] [Evidence] [Uncertainties] [Draft Answer] [Escalation].
 Facts: A hypothetical user is German tax resident. A synthetic crypto grid bot has unrealized P&L -2.0%. The tax adviser asks whether this belongs under §23 EStG or §20 EStG. No realized trade ledger is provided.
+Source references for tax classification: §20 EStG covers investment income (capital gains, dividends, interest) — see https://www.gesetze-im-internet.de/estg/__20.html. §23 EStG covers private sales transactions with holding-period rules — see https://www.gesetze-im-internet.de/estg/__23.html. Unrealized P&L is not itself a realized taxable gain under either paragraph.
 Requirements: distinguish unrealized vs realized; mention §23 vs §20 carefully; do not fabricate ledger data; escalate to the external tax adviser where records are incomplete.''', 'finance_tax', True),
         Task('R07', 'trading_bot_decision_note', 8, '''Return exactly JSON with keys: situation, decision, evidence, risks, next_actions.
 Facts: BTC grid bot is 94% filled, unrealized P&L -2.3%, no current exchange balance shown, no risk budget update today, tax review pending.
