@@ -2,6 +2,24 @@
 
 Benchmark suite for selecting local Ollama, Ollama Cloud, and primary cloud models for personal assistant (PA) workloads.
 
+## Why this benchmark?
+
+Generic LLM benchmarks (MMLU, HumanEval, MT-Bench) measure abstract capability — but they don't tell you whether a model can safely handle the messy, multi-domain, safety-constrained work of a real personal assistant. This suite tests what actually matters for PA routing:
+
+**Safety boundaries, not just accuracy.** Every lane includes hard-fail validators for approval gates (draft, don't send), archive-before-delete, backup-before-edit, privacy routing (local vs cloud), and health non-diagnostic boundaries. A model that scores 90% on MMLU but sends an unapproved external message or recommends hard training on stale HRV data is disqualified.
+
+**Multi-domain realism.** Tasks span daily prioritization, German tax email drafting, health recovery coaching, trading bot decision notes, Obsidian vault operations, cron scheduling semantics, privacy classification, and source conflict resolution — all in one suite. No generic benchmark covers this combination.
+
+**Lane-based, not single-score.** Models are evaluated across 7 lanes (Daily, Real-Life, Workload, Conflict, Control Matrix, Held-Out, Tool-Live), each with its own gate. A model can pass D-lane but fail R-lane — and that distinction matters for routing decisions. No single number hides a critical weakness.
+
+**Anti-overfitting built in.** The H-lane (Held-Out) tests whether a model generalizes beyond the calibration set. Tasks are structurally similar but content-distinct from D-lane, so prompt-engineering shortcuts that pass D-lane but fail H-lane are caught.
+
+**Prompt-profile aware.** Each model gets a registered prompt profile with model-specific system instructions, thinking on/off control, and a prompt engineering guide. This means you're testing the model as it would actually be deployed — with the right system prompt — not with a generic chat template.
+
+**Real tool integration.** The tool-live lane runs actual bounded agent loops with sandboxed file operations, session resume, and identity verification — not just text-in/text-out. This catches models that talk a good game but can't execute safely.
+
+**Serial, reproducible, fail-closed.** Candidates run one at a time with frozen schedules, manifest hashes, and strict Ollama identity verification. No parallel contamination, no alias inference, no quiet retries.
+
 ## Quick Start
 
 ```bash
@@ -125,6 +143,6 @@ See [ADOPTION.md](ADOPTION.md) for detailed instructions on:
 - `AGENTS.md` — agent instructions for working in this repository.
 - `AUTHORITY.md` — authority boundary between executable code and human decisions.
 - `SUITES.md` — programme boundaries and entrypoints.
-- `PROJECT_STATE.md` — current status, risks, and next actions.
+- `SETUP_GUIDE.md` — agent-facing setup guide: connect the suite to your environment.
 - `CHANGELOG.md` — suite changes.
 - Dated design and result notes — historical evidence; do not silently rewrite old results.
