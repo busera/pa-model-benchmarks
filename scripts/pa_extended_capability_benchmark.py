@@ -36,7 +36,7 @@ except ImportError:  # pragma: no cover
     from model_prompt_profiles import request_payload, profile_for_model, require_profile_coverage
 
 from benchmark_manifest import build_manifest, claim_run_root, write_manifest
-from benchmark_transport import ProviderProcessError, ProviderResult, UnsupportedRouteError, classify_exception, parse_hermes_response, parse_ollama_response, result_checks
+from benchmark_transport import ProviderProcessError, ProviderResult, UnsupportedRouteError, classify_exception, exception_checks, parse_hermes_response, parse_ollama_response, resolve_ollama_registered_identity, result_checks
 from benchmark_trials import complete_trial_coverage, make_schedule, progress_snapshot, summarize_trials
 
 RUN_ID_DEFAULT = datetime.now().strftime('%Y%m%d-%H%M%S-pa-extended-capabilities')
@@ -473,7 +473,12 @@ def call_ollama(model: str, task: Task, timeout_s: int = 600) -> ProviderResult:
     req = urllib.request.Request(OLLAMA_URL, data=json.dumps(payload).encode(), headers={'Content-Type': 'application/json'})
     with urllib.request.urlopen(req, timeout=timeout_s) as resp:
         data = json.loads(resp.read().decode())
-    return parse_ollama_response(model, data, payload=payload)
+    registered_identity = resolve_ollama_registered_identity(
+        model, data, chat_url=OLLAMA_URL, timeout_s=timeout_s,
+    )
+    return parse_ollama_response(
+        model, data, payload=payload, registered_identity=registered_identity,
+    )
 
 
 def call_hermes(model: str, task: Task, timeout_s: int = 900) -> ProviderResult:
@@ -512,7 +517,7 @@ def run_cell(run_id: str, root: Path, task: Task, model_tag: str, trial_index: i
         status = 'error'; error = str(exc)[-1000:]
         score = 0.0
         fails = [failure] if task.modality != 'image' else [failure, 'vision_not_supported_or_refused']
-        checks = {'failure_class': failure}
+        checks = exception_checks(exc)
     profile = profile_for_model(model_tag)
     checks = {**checks, 'prompt_profile': profile.name, 'prompt_guide': profile.guide, 'runtime_options': profile.options, 'runtime_top_level': profile.top_level, 'modality': task.modality, 'provider': meta['provider'], 'tier': meta['tier'], 'trial_index': trial_index}
     label = meta['label']

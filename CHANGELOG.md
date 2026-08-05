@@ -1,11 +1,39 @@
 # Changelog
 
+## 2026-08-05 — Approved two-model PA-default night run and realistic telemetry
+
+- Replaced the superseded six-model proposal with the approved strictly serial Cloud comparison: `deepseek-v4-flash:0731-cloud` then `nemotron-3-ultra:cloud`, both thinking-on; Kimi K3 is excluded for extra usage cost.
+- Added exact DeepSeek V4 Flash 0731 registration/profile/guide coverage and updated the deterministic preflight to 231 exact direct calls plus a measured 48-call Hermes agent-loop cap per candidate, 279 scored candidate cap and 558 scored overall cap. One exact-route preflight per candidate raises total exposure to 280 and 560 respectively.
+- Corrected tool-live accounting: a Hermes invocation is not one provider response. Real multi-turn calls are now counted from a transparent loopback recording proxy.
+- Tool-live now records exact request/returned route evidence, finish reasons, prompt/response tokens, provider latency and wall time while running the actual installed Hermes CLI, real file tool and session resume inside a synthetic sandbox.
+- Added explicit failure attribution: setup, sandbox, transport, route and telemetry failures block evidence as `setup_or_route` and cannot be scored as model-output failures.
+- Added focused tests for streaming OpenAI-compatible telemetry, call caps, route mismatches, usage aggregation and fail-closed promotion.
+
+## 2026-08-05 — MB-006 T03 no-call execution packet
+
+- Froze a six-candidate proposal awaiting approval: Cloud `kimi-k3:cloud` thinking-on, DeepSeek V4 Pro, Nemotron 3 Ultra, and Gemma4 31B; local Qwen3.6 27B BF16 and MLX thinking-off.
+- Added exact-tag-only prompt routing and generation-suitable repository guides for Kimi K3 and DeepSeek V4 Pro. Gemma3, GLM5.1, gpt-oss, and other near-match tags no longer inherit another generation's profile.
+- Replaced the T runner's fixed execution roster with explicit `--models` selection while preserving deterministic model-major scheduling and no-call self-test behavior.
+- Added three-repeat tool-live planning, per-case/trial evidence, L03 create+resume accounting, and fail-closed eligibility derived from completion, required coverage, exact route/identity, call accounting, and zero critical failures.
+- Added `mb006_preflight.py`, which validates 76 cells/81 calls per repeat, 228 cells/243 calls per candidate, and 1,368 cells/1,458 calls across six candidates without provider calls.
+- Retained focused RED evidence outside the repository; focused GREEN passed 25 tests and the full suite passed 180 tests. Modified Python compiled, all eight runner self-tests and the no-call preflight passed, and `git diff --check` passed. No provider preflight, model response, private payload, historical artifact mutation, routing change, stage, commit, push, tag, or publication occurred.
+
+## 2026-08-03 — Benchmark Coding governance transfer and category selector
+
+- Added project-local `AGENTS.md`, `AUTHORITY.md`, the canonical benchmark operating standard, and an MB-006 execution plan.
+- Defined separate eligible-leader decisions for Ollama Cloud and local Ollama; prohibited a universal cross-category winner.
+- Added a deterministic quality-first selector requiring complete D/R/W/F/T/H/tool-live evidence, three true repeats, verified route identity, and zero blocking critical failures.
+- Replaced suffix-inferred Ollama Cloud identity acceptance with fresh exact same-origin `/api/tags` registration evidence and retained alias digest/thinking-shape provenance.
+- Added regression coverage for category separation, missing lanes, repeat depth, critical failures, quality-before-cost, exact alias evidence, lazy same-origin lookup, and cross-origin rejection.
+- Remediated two bounded independent-review rounds, then received final exact-working-tree `GO` with `P0=0`, `P1=0`, and `P2=0`.
+- No model calls, cloud spend, private payloads, routing changes, commits, pushes, or historical artifact mutations.
+
 ## 2026-07-31 — coding programme moved to dedicated project
 
-- Moved coding-only runners, tests, promotion goals, archived predecessor source, generated coding artifacts, and interpreted coding reports to `/Users/busera/Developer/Benchmark Coding`.
+- Moved coding-only runners, tests, promotion goals, archived predecessor source, generated coding artifacts, and interpreted coding reports to a separate coding-benchmark project.
 - Retained ignored compatibility symlinks for moved artifact roots so historical report paths continue to resolve; the symlink targets are the canonical project artifacts.
 - Retained shared model guides and generic manifest/transport/profile modules here because the PA suite still depends on them.
-- This repository now owns PA D/R/W/F/T/X/tool-live evidence only; coding-route evidence and future coding reports belong to the dedicated project.
+- This repository now owns PA D/R/W/F/T/H/X/tool-live evidence only; coding-route evidence and future coding reports belong to the dedicated project.
 
 ## 2026-07-30 — Format-neutral coding workspace benchmark
 
@@ -31,7 +59,7 @@
 - DeepSeek V4 Pro led (`0.9882`, one critical failure); Nemotron 3 Ultra was second (`0.9803`, zero critical failures); Qwen3.6 27B MLX BF16 was the strongest local general candidate (`0.9672`, one critical failure).
 - No model passed the unattended held-out gate. Failures were reviewed against raw responses and retained as genuine model/contract failures rather than infrastructure failures.
 - `deepseek-v3.2:cloud` failed preflight with HTTP 410 Gone and was excluded before execution.
-- Andrew approved a bounded quota-continuity route: OpenAI Codex/GPT-5.6-Sol primary → DeepSeek V4 Pro cloud → Nemotron 3 Ultra cloud → Qwen3.6 27B MLX BF16 local. Kimi K2.6 is demoted from provisional broad fallback. Gemma4 31B MLX remains a bounded local coding/reviewer specialist.
+- Approved a bounded quota-continuity route: OpenAI Codex/GPT-5.6-Sol primary → DeepSeek V4 Pro cloud → Nemotron 3 Ultra cloud → Qwen3.6 27B MLX BF16 local. Kimi K2.6 is demoted from provisional broad fallback. Gemma4 31B MLX remains a bounded local coding/reviewer specialist.
 
 ## 2026-07-26 — MB-002 v2 Held-out daily task pack (all P0 fixes, T01–T04)
 
@@ -45,24 +73,24 @@
 
 - Exact staged tree `22fe57499450b749271569fd1137b22e3659cc2e` passed independent release review with P0/P1/P2 all zero.
 - Bound the reviewed tree as initial commit `7ad9413e41184ff90061efa32f975d3989ce8906`.
-- Established `PA Model Benchmark Backlog.md` in Obsidian as the single product-lifecycle authority; project state remains implementation evidence rather than a competing backlog.
+- Established `PA Model Benchmark Backlog.md` in the project knowledge base as the single product-lifecycle authority; project state remains implementation evidence rather than a competing backlog.
 - Reconciled benchmark-related PA Development cards without duplication: product-specific health, RSS, memory, runtime, and backlog-advisor outcomes retain their existing owners.
 
 ## 2026-07-26 — dedicated Developer repository migration
 
-- Established `/Users/busera/Developer/pa-model-benchmarks` as executable authority and retained Obsidian as human decision/report authority.
+- Established the repository as executable authority and retained the knowledge base as human decision/report authority.
 - Copied and byte-verified 39 source files, 11,150 artifact files, and 18 prompt guides before portability changes.
 - Removed hard-coded vault/user runtime roots; active runners now resolve the repository from `__file__`, Python subprocesses use `sys.executable`, and private legacy fixture loading is explicit opt-in through `PA_BENCHMARK_PRIVATE_FIXTURE_ROOT`.
 - Prompt-guide snapshots are repository-owned and source-hashed in run manifests.
 - Added programme boundaries, canonical `pyproject.toml` test configuration, generated-artifact ignores, migration manifest, and clean-export portability tests.
-- Moved the previous vault executable surface to `/Users/busera/_Archive/PA Model Benchmarks/vault-executable-surface-20260726_123531`; no permanent deletion.
+- Moved the previous vault executable surface to an archive; no permanent deletion.
 - Verification after independent-review remediation: exact reviewed tree passed `140` tests in both working-tree and clean-export runs, compilation, eight runner self-tests, and targeted ad-hoc verification before release binding.
 
 ## 2026-07-26 — PA Model Benchmark hardening from transferable coding lessons
 
 ### Scope
 
-- Explicitly separated the D/R/W/F/T/X/tool-live **PA Model Benchmark Test Suite** from the `local_coding_breakpoint_benchmark.py` **Coding Model Benchmark Test Suite**.
+- Explicitly separated the D/R/W/F/T/H/X/tool-live **PA Model Benchmark Test Suite** from the `local_coding_breakpoint_benchmark.py` **Coding Model Benchmark Test Suite**.
 - Coding results, repair passes, hidden tests, generated-code sandbox controls, reports, and routing authority remain outside this PA-suite change.
 - Restored the incidentally edited July 20 coding report byte-for-byte to its pre-task state after the scope conflation was identified.
 
@@ -80,7 +108,7 @@
 - Tracked fixtures declare synthetic provenance, remove named personal-profile contracts and copied exact profile values, and are protected by a structural privacy regression scan that embeds no private values itself. Optional private fixtures remain external and opt-in.
 - Partial-run output now includes frozen completed/planned denominators, per-model coverage, and `winner_withheld` until completion.
 - Added [[2026-07-26 PA Model Benchmark Suite Coding-Lesson Hardening Review]] and updated README/project state/index.
-- Added the Developer-repo/code plus Obsidian-decision-note split; migration is now executed and recorded under `docs/migration/`.
+- Added the Developer-repo/code plus knowledge-base-decision-note split; migration is now executed and recorded under `docs/migration/`.
 
 ### Verification
 
@@ -151,7 +179,7 @@
 
 - F-suite critical checks now validate the selected, rejected, and answer fields rather than accepting terms anywhere in the response.
 - All repeated cells include `trial_index`; repeated artifacts no longer overwrite one another.
-- T-matrix paths are repository-relative and no longer import executable code from `/Users/busera/Temp/Hermes`.
+- T-matrix paths are repository-relative and no longer import executable code from an external temp directory.
 
 ### Verification
 

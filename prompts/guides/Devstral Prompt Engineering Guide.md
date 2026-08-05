@@ -9,7 +9,7 @@ Source status: created 2026-06-28 from live web lookup and Mistral-family guidan
 
 ## Benchmark profile intent
 
-Devstral is a Mistral/code-agent-family model. For Andrew's PA benchmarks, treat it as a coding/agentic specialist candidate, not a broad PA default until the Real-Life and Typical packs prove otherwise.
+Devstral is a Mistral/code-agent-family model. For PA benchmarks, treat it as a coding/agentic specialist candidate, not a broad PA default until the Real-Life and Typical packs prove otherwise.
 
 ## Prompting rules
 

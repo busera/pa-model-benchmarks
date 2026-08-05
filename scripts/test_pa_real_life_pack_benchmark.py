@@ -59,7 +59,8 @@ def test_hermes_max_iterations_is_incomplete_before_semantic_validation(monkeypa
 
     assert cell.status == "incomplete"
     assert cell.score == 0.0
-    assert cell.hard_fails == ["max_iterations_reached"]
+    assert cell.hard_fails == []
+    assert cell.incomplete_reasons == ["max_iterations_reached"]
     assert cell.checks["actual_model"] is None
     assert cell.checks["provider_response"]["identity_evidence"] == "request_only"
 

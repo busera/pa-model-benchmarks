@@ -28,13 +28,13 @@ OLLAMA_URL = "http://localhost:11434/api/chat"
 
 try:
     from benchmark_manifest import build_manifest, claim_run_root, write_manifest
-    from benchmark_transport import ProviderResult, classify_exception, parse_ollama_response, result_checks
+    from benchmark_transport import ProviderResult, classify_exception, exception_checks, parse_ollama_response, resolve_ollama_registered_identity, result_checks
     from benchmark_trials import complete_trial_coverage, make_schedule, progress_snapshot, summarize_trials
     from model_prompt_profiles import profile_for_model, request_payload, require_profile_coverage
 except ImportError:  # pragma: no cover
     sys.path.append(str(BASE_DIR / "scripts"))
     from benchmark_manifest import build_manifest, claim_run_root, write_manifest
-    from benchmark_transport import ProviderResult, classify_exception, parse_ollama_response, result_checks
+    from benchmark_transport import ProviderResult, classify_exception, exception_checks, parse_ollama_response, resolve_ollama_registered_identity, result_checks
     from benchmark_trials import complete_trial_coverage, make_schedule, progress_snapshot, summarize_trials
     from model_prompt_profiles import profile_for_model, request_payload, require_profile_coverage
 
@@ -87,6 +87,7 @@ class Cell:
     status: str
     score: float
     hard_fails: list[str] = field(default_factory=list)
+    incomplete_reasons: list[str] = field(default_factory=list)
     checks: dict[str, Any] = field(default_factory=dict)
     elapsed_s: float = 0.0
     response_text: str = ""
@@ -391,35 +392,32 @@ def select_tasks(task_filter: str | None) -> list[Task]:
     return [by_id[item] for item in wanted]
 
 
-def _identity_matches(requested: str, actual: str) -> bool:
-    accepted = {requested}
-    if requested.endswith(":cloud"):
-        accepted.add(requested.removesuffix(":cloud"))
-    if requested.endswith("-cloud"):
-        accepted.add(requested.removesuffix("-cloud"))
-    return actual in accepted
-
-
 def call_ollama(model: str, prompt: str, *, timeout_s: int = 600, num_predict: int = 1200) -> ProviderResult:
     payload = request_payload(model, prompt, num_predict=num_predict)
     payload["messages"][0]["content"] += "\n\n" + SYSTEM
     request = urllib.request.Request(OLLAMA_URL, data=json.dumps(payload).encode(), headers={"Content-Type": "application/json"})
     with urllib.request.urlopen(request, timeout=timeout_s) as response:
         data = json.loads(response.read().decode())
-    return parse_ollama_response(model, data, payload=payload)
+    registered_identity = resolve_ollama_registered_identity(
+        model, data, chat_url=OLLAMA_URL, timeout_s=timeout_s,
+    )
+    return parse_ollama_response(
+        model, data, payload=payload, registered_identity=registered_identity,
+    )
 
 
 def preflight_model(model: str, *, timeout_s: int = 180) -> dict[str, Any]:
     prompt = 'Return raw JSON exactly: {"status":"ok","role":"daily-pa"}'
     start = time.monotonic()
     try:
-        result = call_ollama(model, prompt, timeout_s=timeout_s, num_predict=80)
+        result = call_ollama(model, prompt, timeout_s=timeout_s, num_predict=200)
         text, actual = result.content, result.returned_model
         obj, warning = extract_json(text)
         schema_ok = obj == {"status": "ok", "role": "daily-pa"} and warning is None and result.incomplete_reason is None
         return {"requested_model": model, "actual_model": actual, "provider": "ollama", "request_mode": "native-chat-stream-false", "status": "pass" if schema_ok else "fail", "schema_ok": schema_ok, "latency_s": round(time.monotonic() - start, 3), "response": text[:500], **result_checks(result)}
     except Exception as exc:
-        return {"requested_model": model, "actual_model": None, "provider": "ollama", "request_mode": "native-chat-stream-false", "status": "error", "schema_ok": False, "latency_s": round(time.monotonic() - start, 3), "error": str(exc)[-500:]}
+        checks = exception_checks(exc)
+        return {"requested_model": model, "actual_model": checks.get("actual_model"), "provider": "ollama", "request_mode": "native-chat-stream-false", "status": "error", "schema_ok": False, "latency_s": round(time.monotonic() - start, 3), "error": str(exc)[-500:], **checks}
 
 
 def run_cell(run_id: str, root: Path, task: Task, model_tag: str, *, trial_index: int, timeout_s: int) -> Cell:
@@ -434,14 +432,17 @@ def run_cell(run_id: str, root: Path, task: Task, model_tag: str, *, trial_index
         response_text, actual_model = result.content, result.returned_model
         checks = result_checks(result)
         if result.incomplete_reason:
-            score, fails, status = 0.0, [result.incomplete_reason], "incomplete"
+            score, fails, incomplete_reasons, status = 0.0, [], [result.incomplete_reason], "incomplete"
         else:
             score, fails, validator_checks = validate(task, response_text)
             checks.update(validator_checks)
+            incomplete_reasons = []
             status = "ok"
     except Exception as exc:
         failure = classify_exception(exc)
-        score, fails, checks, status = 0.0, [failure], {"failure_class": failure}, "error"
+        score, fails, checks, status = 0.0, [failure], exception_checks(exc), "error"
+        incomplete_reasons = []
+        actual_model = checks.get("actual_model") or actual_model
         error = str(exc)[-1000:]
     profile = profile_for_model(model_tag)
     checks.update({
@@ -452,7 +453,7 @@ def run_cell(run_id: str, root: Path, task: Task, model_tag: str, *, trial_index
         "runtime_options": profile.options,
         "runtime_top_level": profile.top_level,
     })
-    cell = Cell(run_id, task.id, task.lane, task.weight, task.critical, model_tag, meta["label"], meta["provider"], status, score, fails, checks, round(time.monotonic() - start, 3), response_text, error)
+    cell = Cell(run_id, task.id, task.lane, task.weight, task.critical, model_tag, meta["label"], meta["provider"], status, score, fails, incomplete_reasons, checks, round(time.monotonic() - start, 3), response_text, error)
     out_dir = root / task.id / meta["label"] / f"trial-{trial_index:03d}"
     out_dir.mkdir(parents=True, exist_ok=True)
     path = out_dir / "cell.json"
@@ -471,6 +472,12 @@ def summarize(run_id: str, root: Path, tasks: list[Task], cells: list[Cell], *, 
         weighted = sum(row.score * row.weight for row in rows) / denominator if denominator else 0.0
         critical_failures = sum(1 for row in rows if row.critical and row.hard_fails)
         task_failures = sum(1 for row in rows if row.hard_fails)
+        incomplete_count = sum(1 for row in rows if row.incomplete_reasons)
+        prompt_tokens_list = [row.checks.get("provider_response", {}).get("prompt_tokens", 0) for row in rows if isinstance(row.checks.get("provider_response", {}).get("prompt_tokens"), (int, float))]
+        response_tokens_list = [row.checks.get("provider_response", {}).get("response_tokens", 0) for row in rows if isinstance(row.checks.get("provider_response", {}).get("response_tokens"), (int, float))]
+        mean_prompt_tokens = round(fmean(prompt_tokens_list), 1) if prompt_tokens_list else 0
+        mean_response_tokens = round(fmean(response_tokens_list), 1) if response_tokens_list else 0
+        total_response_tokens = sum(response_tokens_list)
         json_rows = [row for row in rows if "json_exact" in row.checks and row.checks.get("json_exact") is not False]
         json_expected = [row for row in rows if row.task_id not in {"D01", "D09", "D13"}]
         json_exact_rate = sum(bool(row.checks.get("json_exact")) for row in json_expected) / len(json_expected) if json_expected else 0.0
@@ -488,6 +495,10 @@ def summarize(run_id: str, root: Path, tasks: list[Task], cells: list[Cell], *, 
             "mean_score": round(fmean(row.score for row in rows), 4),
             "task_failures": task_failures,
             "critical_task_failures": critical_failures,
+            "incomplete_count": incomplete_count,
+            "mean_prompt_tokens": mean_prompt_tokens,
+            "mean_response_tokens": mean_response_tokens,
+            "total_response_tokens": total_response_tokens,
             "json_exact_rate": round(json_exact_rate, 4),
             "regression_D02": "pass" if regression_pass else "fail",
             "coverage": f"{len(rows)}/{len(tasks) * expected_repeats}",
@@ -584,9 +595,16 @@ def main(argv: list[str] | None = None) -> int:
         model_routes={model: "ollama" for model in models},
     )
     write_manifest(root, manifest)
-    preflights = [preflight_model(model, timeout_s=min(args.timeout, 180)) for model in models]
-    (root / "preflight.json").write_text(json.dumps(preflights, indent=2, ensure_ascii=False), encoding="utf-8")
-    print(json.dumps({"preflight": preflights}, ensure_ascii=False))
+    if args.preflight_only and args.skip_preflight:
+        raise ValueError("--preflight-only and --skip-preflight are mutually exclusive")
+    if args.skip_preflight:
+        preflights: list[dict[str, Any]] = []
+        preflight_payload: Any = {"status": "skipped", "reason": "externally_governed_exact_route_preflight"}
+    else:
+        preflights = [preflight_model(model, timeout_s=min(args.timeout, 180)) for model in models]
+        preflight_payload = preflights
+    (root / "preflight.json").write_text(json.dumps(preflight_payload, indent=2, ensure_ascii=False), encoding="utf-8")
+    print(json.dumps({"preflight": preflight_payload}, ensure_ascii=False))
     if args.preflight_only:
         return 0 if all(row["status"] == "pass" for row in preflights) else 2
     if not args.skip_preflight and any(row["status"] != "pass" for row in preflights):

@@ -62,7 +62,7 @@ If a required value is not in the prompt, use null or an explicit uncertainty fi
 ## Best use in PA
 
 - Watchlist: human-reviewed coding/prose, long-horizon codebase experiments, cyber/code analysis.
-- Reject for now: inbox triage automation, Obsidian edits, notification sending/drafting pipelines, strict JSON coding harnesses.
+- Reject for now: inbox triage automation, vault edits, notification sending/drafting pipelines, strict JSON coding harnesses.
 
 ## Sources
 

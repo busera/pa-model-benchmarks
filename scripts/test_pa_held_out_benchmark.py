@@ -578,7 +578,8 @@ def test_run_cell_with_token_limit_is_incomplete(monkeypatch, tmp_path):
     cell = m.run_cell("truncated", tmp_path, m.task_list()[0], "qwen3.6:27b-mlx", trial_index=1, timeout_s=10)
 
     assert cell.status == "incomplete"
-    assert cell.hard_fails == ["output_truncated"]
+    assert cell.hard_fails == []
+    assert cell.incomplete_reasons == ["output_truncated"]
 
 
 def test_run_cell_classifies_transport_failure(monkeypatch, tmp_path):
@@ -635,6 +636,16 @@ def test_preflight_only_writes_manifest_before_provider_call(tmp_path, monkeypat
 
     assert result == 0
     assert events == ["manifest", "provider"]
+
+
+def test_skip_preflight_makes_no_preflight_provider_call(tmp_path, monkeypatch):
+    m = load_module()
+    monkeypatch.setattr(m, "ARTIFACTS_DIR", tmp_path)
+    monkeypatch.setattr(m, "require_profile_coverage", lambda models: None)
+    monkeypatch.setattr(m, "build_manifest", lambda **kwargs: {"run_id": kwargs["run_id"]})
+    monkeypatch.setattr(m, "preflight_model", lambda *args, **kwargs: (_ for _ in ()).throw(AssertionError("preflight called")))
+    monkeypatch.setattr(m, "make_schedule", lambda *args, **kwargs: [])
+    assert m.main(["--models", "candidate:cloud", "--tasks", "H01", "--run-id", "skip-preflight", "--skip-preflight"]) == 0
 
 
 # ---------------------------------------------------------------------------

@@ -34,7 +34,7 @@ Mistral's official guidance emphasizes clear, complete, hierarchical prompts, Ma
 ## PA prompt pattern
 
 ```text
-You are Andrew's PA benchmark candidate. Your task is to complete the specified benchmark case.
+You are the PA benchmark candidate. Your task is to complete the specified benchmark case.
 <context>...</context>
 <constraints>...</constraints>
 <output_contract>Return exactly ...</output_contract>

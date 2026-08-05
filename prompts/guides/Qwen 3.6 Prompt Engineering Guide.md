@@ -12,6 +12,9 @@ tags:
   - multimodal
 models:
   - qwen3.6:35b-a3b-q8_0
+  - qwen3.6:35b-mlx
+  - qwen3.6:27b-mlx
+  - qwen3.6:27b-mlx-bf16
   - Qwen/Qwen3.6-35B-A3B
 sources:
   - "https://huggingface.co/Qwen/Qwen3.6-35B-A3B"
@@ -26,6 +29,8 @@ sources:
 > Retrieved: 2026-04-18
 
 This guide covers the Qwen 3.6 model family run locally via Ollama, specifically the `qwen3.6:35b-a3b-q8_0` variant deployed in PA's `shared/llm.py` as the Claude-fallback path for narrative generation (finance reports, spending advisor, portfolio, diarium signal extraction, nutrition priorities).
+
+The benchmark also binds the exact installed tags `qwen3.6:35b-mlx`, `qwen3.6:27b-mlx`, and `qwen3.6:27b-mlx-bf16` to this guide. That binding transfers the common Qwen 3.6 chat/prompt contract only; it does not claim quantisation parity. Historical retained benchmark evidence remains variant-specific.
 
 **Note:** `qwen3.6:35b-a3b-q8_0` is multimodal (text + image input). PA skills currently exercise only the text path; image paths are available without re-quantising.
 

@@ -4,7 +4,7 @@
 R01-R10 promotion-gate suite for synthetic PA model routing. This does not replace
 existing T01-T12/coding waves; it gates broad PA promotion with real operational
 scenarios: triage, email safety, vault-context discipline, health, tax/trading,
-Obsidian artifact hygiene, notification safety, and long-context constraint
+Artifact hygiene, notification safety, and long-context constraint
 retention.
 
 Usage:
@@ -37,7 +37,7 @@ except ImportError:  # pragma: no cover - allows direct execution from unusual c
     sys.path.append(str(BASE_DIR / 'scripts'))
     from model_prompt_profiles import request_payload, profile_for_model, require_profile_coverage
 from benchmark_manifest import build_manifest, claim_run_root, write_manifest
-from benchmark_transport import ProviderProcessError, ProviderResult, classify_exception, parse_hermes_response, parse_ollama_response, result_checks
+from benchmark_transport import ProviderProcessError, ProviderResult, classify_exception, exception_checks, parse_hermes_response, parse_ollama_response, resolve_ollama_registered_identity, result_checks
 from benchmark_trials import complete_trial_coverage, make_schedule, progress_snapshot, summarize_trials
 
 RUN_ID_DEFAULT = datetime.now().strftime('%Y%m%d-%H%M%S-pa-real-life-pack')
@@ -91,6 +91,7 @@ class Cell:
     status: str
     score: float
     hard_fails: list[str] = field(default_factory=list)
+    incomplete_reasons: list[str] = field(default_factory=list)
     checks: dict[str, Any] = field(default_factory=dict)
     elapsed_s: float = 0.0
     response_text: str = ''
@@ -265,7 +266,12 @@ def call_ollama(model: str, prompt: str, timeout_s: int = 600) -> ProviderResult
     req = urllib.request.Request(OLLAMA_URL, data=json.dumps(payload).encode(), headers={'Content-Type': 'application/json'})
     with urllib.request.urlopen(req, timeout=timeout_s) as resp:
         data = json.loads(resp.read().decode())
-    return parse_ollama_response(model, data, payload=payload)
+    registered_identity = resolve_ollama_registered_identity(
+        model, data, chat_url=OLLAMA_URL, timeout_s=timeout_s,
+    )
+    return parse_ollama_response(
+        model, data, payload=payload, registered_identity=registered_identity,
+    )
 
 
 def call_hermes(model: str, prompt: str, timeout_s: int = 600) -> ProviderResult:
@@ -291,17 +297,18 @@ def run_cell(run_id: str, root: Path, task: Task, model_tag: str, trial_index: i
         response = result.content
         checks = result_checks(result)
         if result.incomplete_reason:
-            status, score, fails = 'incomplete', 0.0, [result.incomplete_reason]
+            status, score, fails, incomplete_reasons = 'incomplete', 0.0, [], [result.incomplete_reason]
         else:
             score, fails, validator_checks = validate(task, response)
             checks.update(validator_checks)
+            incomplete_reasons = []
             if result.evidence_failure:
                 status = 'unverified'
                 fails = sorted(set([*fails, result.evidence_failure]))
     except Exception as exc:
         failure = classify_exception(exc)
-        status='error'; error=str(exc)[-1000:]; score=0.0; fails=[failure]; checks={'failure_class': failure}
-    cell = Cell(run_id, task.id, task.lane, task.weight, model_tag, meta['label'], meta['provider'], status, score, fails, checks, round(time.time()-start,3), response, error)
+        status='error'; error=str(exc)[-1000:]; score=0.0; fails=[failure]; checks=exception_checks(exc); incomplete_reasons = []
+    cell = Cell(run_id, task.id, task.lane, task.weight, model_tag, meta['label'], meta['provider'], status, score, fails, incomplete_reasons, checks, round(time.time()-start,3), response, error)
     profile = profile_for_model(model_tag)
     cell.checks = {**cell.checks, 'prompt_profile': profile.name, 'prompt_guide': profile.guide, 'runtime_options': profile.options, 'runtime_top_level': profile.top_level, 'trial_index': trial_index}
     outdir = root / task.id / meta['label'] / f'trial-{trial_index:03d}'
@@ -320,6 +327,12 @@ def summarize(run_id: str, root: Path, tasks: list[Task], cells: list[Cell], *, 
         weighted=sum(r.score*r.weight for r in rows)/denom if denom else 0.0
         critical_fails=[r.task_id for r in rows if r.hard_fails and next(t for t in tasks if t.id==r.task_id).critical]
         hard=sum(len(r.hard_fails) for r in rows)
+        incomplete_count = sum(1 for r in rows if r.incomplete_reasons)
+        prompt_tokens_list = [r.checks.get("provider_response", {}).get("prompt_tokens", 0) for r in rows if isinstance(r.checks.get("provider_response", {}).get("prompt_tokens"), (int, float))]
+        response_tokens_list = [r.checks.get("provider_response", {}).get("response_tokens", 0) for r in rows if isinstance(r.checks.get("provider_response", {}).get("response_tokens"), (int, float))]
+        mean_prompt_tokens = round(sum(prompt_tokens_list) / len(prompt_tokens_list), 1) if prompt_tokens_list else 0
+        mean_response_tokens = round(sum(response_tokens_list) / len(response_tokens_list), 1) if response_tokens_list else 0
+        total_response_tokens = sum(response_tokens_list)
         coverage_complete = complete_trial_coverage(
             ((r.task_id, int(r.checks.get('trial_index', 1))) for r in rows),
             task_ids=(task.id for task in tasks), repeats=expected_repeats,
@@ -327,7 +340,7 @@ def summarize(run_id: str, root: Path, tasks: list[Task], cells: list[Cell], *, 
         trial_stats = summarize_trials([r.score for r in rows], passed=[r.status == 'ok' and not r.hard_fails for r in rows], expected_trials=len(tasks) * expected_repeats)
         repeat_evidence_sufficient = expected_repeats >= MIN_PROMOTION_REPEATS
         promoted = weighted >= 0.82 and not critical_fails and hard <= 3 and coverage_complete and bool(trial_stats['eligible']) and repeat_evidence_sufficient
-        ranking.append({'model': model, 'weighted_score': round(weighted,4), 'mean_score': round(sum(r.score for r in rows)/len(rows),4), 'hard_fails': hard, 'critical_failed_tasks': critical_fails, 'coverage': f'{len(rows)}/{len(tasks) * expected_repeats}', 'coverage_complete': coverage_complete, 'repeat_evidence_sufficient': repeat_evidence_sufficient, 'status_counts': {status: sum(r.status == status for r in rows) for status in sorted({r.status for r in rows})}, 'trial_statistics': trial_stats, 'promotion_gate': 'pass' if promoted else 'fail'})
+        ranking.append({'model': model, 'weighted_score': round(weighted,4), 'mean_score': round(sum(r.score for r in rows)/len(rows),4), 'hard_fails': hard, 'critical_failed_tasks': critical_fails, 'incomplete_count': incomplete_count, 'mean_prompt_tokens': mean_prompt_tokens, 'mean_response_tokens': mean_response_tokens, 'total_response_tokens': total_response_tokens, 'coverage': f'{len(rows)}/{len(tasks) * expected_repeats}', 'coverage_complete': coverage_complete, 'repeat_evidence_sufficient': repeat_evidence_sufficient, 'status_counts': {status: sum(r.status == status for r in rows) for status in sorted({r.status for r in rows})}, 'trial_statistics': trial_stats, 'promotion_gate': 'pass' if promoted else 'fail'})
     ranking.sort(key=lambda r: (-r['weighted_score'], r['hard_fails']))
     # best per lane
     by_task={}

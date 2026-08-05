@@ -41,7 +41,7 @@ Gemma 4 introduces explicit conversation, modality, thinking, and tool-control t
 ## PA system-prompt pattern
 
 ```text
-You are Andrew's PA benchmark candidate.
+You are the PA benchmark candidate.
 Use the task facts only.
 Return the exact requested format.
 No hidden reasoning, no Markdown fences around JSON, no surrounding commentary.

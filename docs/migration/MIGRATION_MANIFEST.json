@@ -1,10 +1,10 @@
 {
   "schema_version": 1,
-  "migration": "LLM A-B Tests vault executable surface to dedicated Developer repository",
+  "migration": "LLM A-B Tests knowledge base executable surface to dedicated Developer repository",
   "created_at": "2026-07-26T12:27:32+02:00",
-  "source_vault_path": "/Users/busera/Obsidian/obs_BFB/4_Projects/PA Development/LLM A-B Tests",
-  "target_repository": "/Users/busera/Developer/pa-model-benchmarks",
-  "pre_migration_backup": "/Users/busera/Temp/Hermes/change-backups/20260726_122732_llm-ab-tests-developer-migration/LLM A-B Tests",
+  "source_vault_path": "<redacted>/knowledge-base/PA Development/LLM A-B Tests",
+  "target_repository": "<redacted>/Developer/pa-model-benchmarks",
+  "pre_migration_backup": "<redacted>/change-backups/20260726_122732_llm-ab-tests-developer-migration/LLM A-B Tests",
   "scope": {
     "scripts_source": {
       "algorithm": "sha256(sorted(relative_path + NUL + file_sha256 + LF))",
@@ -49,10 +49,10 @@
   },
   "authority": {
     "developer": "executable source, tests, fixtures, prompt snapshots, technical manifests, local artifacts",
-    "obsidian": "human decisions, benchmark index, interpreted reports, project notes"
+    "knowledge_base": "human decisions, benchmark index, interpreted reports, project notes"
   },
-  "deletion": "none; original executable surfaces archived outside the vault",
-  "archived_original_surface": "/Users/busera/_Archive/PA Model Benchmarks/vault-executable-surface-20260726_123531",
+  "deletion": "none; original executable surfaces archived outside the knowledge base",
+  "archived_original_surface": "<redacted>/Archive/PA Model Benchmarks/vault-executable-surface-20260726_123531",
   "archive_counts": {
     "scripts_files_including_runtime_caches": 114,
     "artifacts_files": 11150
@@ -66,7 +66,7 @@
     "git_diff_check": "passed",
     "ad_hoc": "passed: transport, truncation, gate, scheduling, progress, guide hashing, portability, staged scope",
     "secret_pattern_hits": 0,
-    "verifier_archive": "/Users/busera/Temp/Hermes/change-backups/20260726_122732_llm-ab-tests-developer-migration/verification/hermes-verify-8esw7b0b.py",
+    "verifier_archive": "<redacted>/change-backups/20260726_122732_llm-ab-tests-developer-migration/verification/hermes-verify-8esw7b0b.py",
     "post_review_working_tree_pytest": "140 passed",
     "post_review_remediation": [
       "affirmative Ollama completion required",

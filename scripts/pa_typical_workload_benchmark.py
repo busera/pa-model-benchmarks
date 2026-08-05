@@ -38,7 +38,7 @@ except ImportError:  # pragma: no cover
     from model_prompt_profiles import request_payload, profile_for_model, require_profile_coverage
 
 from benchmark_manifest import build_manifest, claim_run_root, write_manifest
-from benchmark_transport import ProviderProcessError, ProviderResult, classify_exception, parse_hermes_response, parse_ollama_response, result_checks
+from benchmark_transport import ProviderProcessError, ProviderResult, classify_exception, exception_checks, parse_hermes_response, parse_ollama_response, resolve_ollama_registered_identity, result_checks
 from benchmark_trials import complete_trial_coverage, make_schedule, progress_snapshot, summarize_trials
 
 RUN_ID_DEFAULT = datetime.now().strftime('%Y%m%d-%H%M%S-pa-typical-workload')
@@ -91,6 +91,7 @@ class Cell:
     status: str
     score: float
     hard_fails: list[str] = field(default_factory=list)
+    incomplete_reasons: list[str] = field(default_factory=list)
     checks: dict[str, Any] = field(default_factory=dict)
     elapsed_s: float = 0.0
     response_text: str = ''
@@ -102,7 +103,7 @@ def task_list() -> list[Task]:
     return [
         Task('W01', 'daily_brief_prioritization', 12, '''Return exactly sections: [Top 3] [Schedule Risks] [Health/Training] [Waiting/Blocked] [Do Not Do].
 Facts: Today has 09:00 IA prep, 14:00 compliance review, 18:30 training. Reminders include model benchmark rerun, Apple Notes cleanup, tax advisor reply, GitHub privacy, and read-later items. Health data: Fitbit stale after 02:00; FoodNoms breakfast missing. Requirement: recommend only the top 3 actions; mark stale/missing data; do not try to clear the whole list.''', 'sections_tokens', False),
-        Task('W02', 'obs_tldr_handoff', 10, '''Create an Obsidian session TL;DR note from this handoff.
+        Task('W02', 'obs_tldr_handoff', 10, '''Create a session TL;DR note from this handoff.
 Facts: Implemented profiled benchmark runners; report path <vault>/LLM A-B Tests/2026-06-26 Full Shortlist Profiled Benchmark Report.md; backup path <backup>/pa-model-benchmark-prompt-guides-20260626-090100; decision: do not broadly promote GLM, keep qwen3-coder as coding specialist candidate; open item: add typical workload pack.
 Return Markdown with H1, body date wikilink [[2026-06-26]], Summary, Evidence and Artifacts, Decisions, Open Items / Next Actions, Handoff Notes. Do not include secrets.''', 'obs_tldr', False),
         Task('W03', 'skill_routing_and_context_loading', 10, '''Return exactly JSON with keys: skills_to_load, context_to_read, first_actions, risks.
@@ -344,7 +345,12 @@ def call_ollama(model: str, prompt: str, timeout_s: int = 600) -> ProviderResult
     req = urllib.request.Request(OLLAMA_URL, data=json.dumps(payload).encode(), headers={'Content-Type': 'application/json'})
     with urllib.request.urlopen(req, timeout=timeout_s) as resp:
         data = json.loads(resp.read().decode())
-    return parse_ollama_response(model, data, payload=payload)
+    registered_identity = resolve_ollama_registered_identity(
+        model, data, chat_url=OLLAMA_URL, timeout_s=timeout_s,
+    )
+    return parse_ollama_response(
+        model, data, payload=payload, registered_identity=registered_identity,
+    )
 
 
 def call_hermes(model: str, prompt: str, timeout_s: int = 600) -> ProviderResult:
@@ -369,19 +375,20 @@ def run_cell(run_id: str, root: Path, task: Task, model_tag: str, trial_index: i
         response = result.content
         checks = result_checks(result)
         if result.incomplete_reason:
-            status, score, fails = 'incomplete', 0.0, [result.incomplete_reason]
+            status, score, fails, incomplete_reasons = 'incomplete', 0.0, [], [result.incomplete_reason]
         else:
             score, fails, validator_checks = validate(task, response)
             checks.update(validator_checks)
+            incomplete_reasons = []
             if result.evidence_failure:
                 status = 'unverified'
                 fails = sorted(set([*fails, result.evidence_failure]))
     except Exception as exc:
         failure = classify_exception(exc)
-        status = 'error'; error = str(exc)[-1000:]; score = 0.0; fails = [failure]; checks = {'failure_class': failure}
+        status = 'error'; error = str(exc)[-1000:]; score = 0.0; fails = [failure]; checks = exception_checks(exc); incomplete_reasons = []
     profile = profile_for_model(model_tag)
     checks = {**checks, 'prompt_profile': profile.name, 'prompt_guide': profile.guide, 'runtime_options': profile.options, 'runtime_top_level': profile.top_level, 'trial_index': trial_index}
-    cell = Cell(run_id, task.id, task.lane, task.weight, model_tag, meta['label'], meta['provider'], status, score, fails, checks, round(time.time() - start, 3), response, error)
+    cell = Cell(run_id, task.id, task.lane, task.weight, model_tag, meta['label'], meta['provider'], status, score, fails, incomplete_reasons, checks, round(time.time() - start, 3), response, error)
     outdir = root / task.id / meta['label'] / f'trial-{trial_index:03d}'
     outdir.mkdir(parents=True, exist_ok=True)
     path = outdir / 'cell.json'
@@ -399,6 +406,12 @@ def summarize(run_id: str, root: Path, tasks: list[Task], cells: list[Cell], *, 
         denom = sum(r.weight for r in rows)
         weighted = sum(r.score * r.weight for r in rows) / denom if denom else 0.0
         hard = sum(len(r.hard_fails) for r in rows)
+        incomplete_count = sum(1 for r in rows if r.incomplete_reasons)
+        prompt_tokens_list = [r.checks.get("provider_response", {}).get("prompt_tokens", 0) for r in rows if isinstance(r.checks.get("provider_response", {}).get("prompt_tokens"), (int, float))]
+        response_tokens_list = [r.checks.get("provider_response", {}).get("response_tokens", 0) for r in rows if isinstance(r.checks.get("provider_response", {}).get("response_tokens"), (int, float))]
+        mean_prompt_tokens = round(sum(prompt_tokens_list) / len(prompt_tokens_list), 1) if prompt_tokens_list else 0
+        mean_response_tokens = round(sum(response_tokens_list) / len(response_tokens_list), 1) if response_tokens_list else 0
+        total_response_tokens = sum(response_tokens_list)
         coverage = f'{len(rows)}/{len(tasks) * expected_repeats}'
         critical_by_id = {t.id: t.critical for t in tasks}
         critical_hard = sum(1 for r in rows if critical_by_id.get(r.task_id) and r.hard_fails)
@@ -408,7 +421,7 @@ def summarize(run_id: str, root: Path, tasks: list[Task], cells: list[Cell], *, 
         )
         trial_stats = summarize_trials([r.score for r in rows], passed=[r.status == 'ok' and not r.hard_fails for r in rows], expected_trials=len(tasks) * expected_repeats)
         typical_gate = weighted >= 0.82 and hard <= 8 and critical_hard == 0 and coverage_complete and bool(trial_stats['eligible'])
-        ranking.append({'model': model, 'weighted_score': round(weighted, 4), 'mean_score': round(sum(r.score for r in rows) / len(rows), 4), 'hard_fails': hard, 'critical_hard_fails': critical_hard, 'coverage': coverage, 'status_counts': {status: sum(r.status == status for r in rows) for status in sorted({r.status for r in rows})}, 'trial_statistics': trial_stats, 'typical_workload_gate': 'pass' if typical_gate else 'fail'})
+        ranking.append({'model': model, 'weighted_score': round(weighted, 4), 'mean_score': round(sum(r.score for r in rows) / len(rows), 4), 'hard_fails': hard, 'critical_hard_fails': critical_hard, 'incomplete_count': incomplete_count, 'mean_prompt_tokens': mean_prompt_tokens, 'mean_response_tokens': mean_response_tokens, 'total_response_tokens': total_response_tokens, 'coverage': coverage, 'status_counts': {status: sum(r.status == status for r in rows) for status in sorted({r.status for r in rows})}, 'trial_statistics': trial_stats, 'typical_workload_gate': 'pass' if typical_gate else 'fail'})
     ranking.sort(key=lambda r: (-r['weighted_score'], r['hard_fails']))
     by_task = {}
     for task in tasks:

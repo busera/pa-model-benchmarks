@@ -4,9 +4,26 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "pa-model-benchmarks"
-version = "0.1.0"
-description = "Governed PA and coding model benchmark suites"
+version = "1.0.0"
+description = "Governed personal assistant (PA) model benchmark suite — evaluate LLMs for daily PA workloads across multiple lanes"
 requires-python = ">=3.11"
+license = {text = "MIT"}
+authors = [
+    {name = "PA Model Benchmark Contributors"},
+]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Software Development :: Testing",
+]
+urls = {Repository = "https://github.com/busera/pa-model-benchmarks"}
 
 [tool.pytest.ini_options]
 testpaths = ["scripts"]

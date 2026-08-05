@@ -20,3 +20,7 @@ workspaces/
 !evidence/
 !evidence/releases/
 !evidence/releases/**
+
+# Personal session docs — not part of the public release.
+PROJECT_STATE.md
+DO_NEXT_SESSION.md

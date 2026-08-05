@@ -62,13 +62,13 @@ An initial independent review incorrectly audited the Coding Model Benchmark pro
 - PA native-response integration: `pa_daily_use_benchmark.py`, `pa_real_life_pack_benchmark.py`, `pa_typical_workload_benchmark.py`, `pa_conflict_retrieval_benchmark.py`, `pa_extended_capability_benchmark.py`, and `run_t01_t12_full_matrix_profiled.py`.
 - Regression coverage: `test_benchmark_core.py`, `test_benchmark_transport.py`, and `test_pa_daily_use_benchmark.py`.
 
-Backup: `/Users/busera/Temp/Hermes/pa-model-benchmark-hardening-20260726_113535/`.
+Backup: `/tmp/pa-model-benchmark-hardening-20260726_113535/`.
 
 ## Verification status
 
 Verification evidence must be read as PA-suite harness verification, not a new model benchmark result. No model calls were made and no routing decision changed.
 
-Executable authority has moved to `/Users/busera/Developer/pa-model-benchmarks`; the previous vault executable surface is archived without deletion. Verification establishes a working-tree result until the exact staged tree receives clean-export, ad-hoc, and independent-review evidence and is committed.
+Executable authority has moved to `.`; the previous vault executable surface is archived without deletion. Verification establishes a working-tree result until the exact staged tree receives clean-export, ad-hoc, and independent-review evidence and is committed.
 
 - RED observed for model-major scheduling, missing top-level keep-alive, missing transport module/provenance, and missing denominator-safe progress helper.
 - Focused transport/daily/PA regression checks passed after implementation.

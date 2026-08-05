@@ -1,6 +1,6 @@
 # MiniMax M3 Prompt Engineering Guide
 
-Source status: created 2026-06-28 from available web research plus Andrew's deterministic PA benchmark requirements. Replace with richer vendor guidance if MiniMax publishes model-specific prompting details.
+Source status: created 2026-06-28 from available web research plus deterministic PA benchmark requirements. Replace with richer vendor guidance if MiniMax publishes model-specific prompting details.
 
 ## Sources checked
 

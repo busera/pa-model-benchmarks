@@ -18,11 +18,12 @@ def load_module():
     return module
 
 
-def test_default_candidate_families_have_governed_profiles():
+def test_governed_exact_candidates_have_repository_guides():
     m = load_module()
     candidates = [
         "gpt-5.5",
         "kimi-k2.6:cloud",
+        "deepseek-v4-flash:0731-cloud",
         "deepseek-v4-pro:cloud",
         "nemotron-3-ultra:cloud",
         "qwen3-coder:480b-cloud",
@@ -37,6 +38,42 @@ def test_default_candidate_families_have_governed_profiles():
     m.require_profile_coverage(candidates)
     assert all(m.profile_for_model(tag).name != "generic" for tag in candidates)
     assert all(m.guide_path(m.profile_for_model(tag)).is_file() for tag in candidates)
+
+
+def test_family_substrings_do_not_claim_exact_profile_coverage():
+    m = load_module()
+    unsafe_near_matches = [
+        "gemma3:12b-cloud",
+        "glm-5.1:cloud",
+        "gpt-oss:120b-cloud",
+        "prefix-qwen3.6-fictional:cloud",
+    ]
+
+    for tag in unsafe_near_matches:
+        assert m.profile_for_model(tag).name == "generic"
+
+    try:
+        m.require_profile_coverage(unsafe_near_matches)
+    except ValueError as exc:
+        assert all(tag in str(exc) for tag in unsafe_near_matches)
+    else:
+        raise AssertionError("near-match tags must not inherit another generation's guide")
+
+
+def test_frozen_mb006_roster_uses_exact_thinking_lane_profiles():
+    m = load_module()
+    roster = [
+        "deepseek-v4-flash:0731-cloud",
+        "nemotron-3-ultra:cloud",
+    ]
+
+    m.require_profile_coverage(roster)
+
+    for tag in roster:
+        profile = m.profile_for_model(tag)
+        assert profile.name != "generic"
+        assert profile.top_level == {"think": True}
+        assert tag in m.guide_path(profile).read_text(encoding="utf-8")
 
 
 def test_prompt_guides_are_repo_owned_not_vault_runtime_dependencies():

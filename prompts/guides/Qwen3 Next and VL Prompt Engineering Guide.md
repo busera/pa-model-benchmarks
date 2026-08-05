@@ -24,7 +24,7 @@ For thinking-style Qwen tasks, docs commonly recommend:
 - `top_k=20`
 - `min_p=0`
 
-Andrew's benchmark harness is final-answer/contract based, so use non-thinking mode unless explicitly evaluating reasoning traces.
+the benchmark harness is final-answer/contract based, so use non-thinking mode unless explicitly evaluating reasoning traces.
 
 ## Prompting rules for Qwen3 Next
 

@@ -16,11 +16,11 @@ tags:
 
 ## Recommendation
 
-Move the executable LLM benchmark project out of the Obsidian vault into a dedicated Git repository under:
+Move the executable LLM benchmark project out of the knowledge base into a dedicated Git repository.
 
-`/Users/busera/Developer/pa-model-benchmarks`
+`.`
 
-Retain the canonical human decision notes and benchmark reports in Obsidian. This should follow the established AIRUM pattern: Developer is authoritative for code/runtime evidence; Obsidian is authoritative for decisions, interpretation, and project notes.
+Retain the canonical human decision notes and benchmark reports in your knowledge base. This should follow the established pattern: Developer is authoritative for code/runtime evidence; the knowledge base is authoritative for decisions, interpretation, and project notes.
 
 The original recommendation was to delay execution until PA hardening was release-bound in the vault. During execution, a full backup and byte-verified copy were taken first, then hardening continued only in the dedicated repository so the selective vault worktree could no longer obscure executable bytes. The final Developer tree is independently verified before its initial Git commit.
 
@@ -45,7 +45,7 @@ The original recommendation was to delay execution until PA hardening was releas
 - generated artifacts in a Git-ignored `artifacts/` directory;
 - a small allow-listed `evidence/releases/<run-id>/` set only when a release needs durable machine-readable evidence.
 
-### Obsidian — authoritative
+### Knowledge base — authoritative
 
 - benchmark index and routing decisions;
 - human-adjudicated reports and comparison notes;
@@ -57,7 +57,7 @@ Do not keep a symlinked copy of the Developer repo inside the vault; that would 
 ## Proposed repository structure
 
 ```text
-/Users/busera/Developer/pa-model-benchmarks/
+./
 ├── pyproject.toml
 ├── README.md
 ├── CHANGELOG.md
@@ -81,23 +81,23 @@ One repository is preferable initially because both programmes share scheduling,
 3. Create a timestamped full backup outside both the vault and target repository.
 4. Build the Developer repository by **copying**, not moving, the reviewed source set first.
 5. Separate `suites/pa` and `suites/coding`; make shared dependencies explicit.
-6. Replace vault-relative and `/Users/busera/Obsidian/obs_BFB` runtime dependencies with repo-owned fixtures or explicit configuration. Unknown/missing configuration must fail closed.
+6. Replace vault-relative and `your knowledge base` runtime dependencies with repo-owned fixtures or explicit configuration. Unknown/missing configuration must fail closed.
 7. Add `pyproject.toml`, clean-export tests, source-hash coverage, and a Git-ignore policy for generated artifacts/caches.
 8. Copy historical artifacts to the new ignored artifact store or an external archive; retain a manifest with file counts and hashes.
 9. Run old-versus-new parity: full tests, all zero-model-call self-tests, manifest equality where expected, selected artifact hashes, and one bounded live smoke only after approval.
 10. Update vault reports/index with the new repo path and exact commit/tree. Keep notes in the vault.
-11. Archive the old executable vault surface only after parity and link checks. No permanent deletion; any eventual deletion requires Andrew's separate exact `DELETE` confirmation.
+11. Archive the old executable vault surface only after parity and link checks. No permanent deletion; any eventual deletion requires the operator's separate exact `DELETE` confirmation.
 
 ## Migration gates
 
 - Target repo is independently Git-versioned and runnable from a clean clone/export.
 - Every executable source named by manifests is tracked.
 - PA and Coding suites have separate entry points, documentation, result schemas, and promotion authority.
-- No runtime dependency on the Obsidian vault unless explicitly configured for a private/local fixture and recorded in the manifest.
+- No runtime dependency on the knowledge base unless explicitly configured for a private/local fixture and recorded in the manifest.
 - `artifacts/`, caches, generated workspaces, and model outputs are ignored by default.
-- Canonical Obsidian reports resolve to an exact Developer commit/tree and release-evidence manifest.
+- Canonical knowledge base reports resolve to an exact Developer commit/tree and release-evidence manifest.
 - Old/new test and self-test parity passes before the old path is archived.
 
 ## Decision
 
-**Executed.** The migration was justified by reproducibility, Git hygiene, Obsidian indexing noise, artifact volume, and clearer suite boundaries. It is a code/docs authority split, not a wholesale move of benchmark knowledge out of Obsidian. `MIGRATION_MANIFEST.json` and the Developer repository state supersede this proposal for current status.
+**Executed.** The migration was justified by reproducibility, Git hygiene, knowledge base indexing noise, artifact volume, and clearer suite boundaries. It is a code/docs authority split, not a wholesale move of benchmark knowledge out of the knowledge base. `MIGRATION_MANIFEST.json` and the Developer repository state supersede this proposal for current status.

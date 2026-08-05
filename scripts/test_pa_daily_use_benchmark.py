@@ -158,7 +158,8 @@ def test_summary_gate_fails_on_complete_but_incomplete_status_cell(tmp_path):
             run_id="incomplete", task_id=task.id, lane=task.lane, weight=task.weight,
             critical=task.critical, model_tag="candidate", model_label="candidate",
             provider="ollama", status="incomplete" if incomplete else "ok", score=1.0,
-            hard_fails=["output_truncated"] if incomplete else [],
+            hard_fails=[],
+            incomplete_reasons=["output_truncated"] if incomplete else [],
             checks={"json_exact": True, "trial_index": 1},
         ))
 
@@ -237,14 +238,6 @@ def test_semantic_relaxation_keeps_genuine_failures():
     assert fails == ["json_not_object"]
 
 
-def test_cloud_identity_normalization_is_narrow():
-    m = load_module()
-    assert m._identity_matches("glm-5.2:cloud", "glm-5.2")
-    assert m._identity_matches("gemma4:31b-cloud", "gemma4:31b")
-    assert not m._identity_matches("gemma4:31b-cloud", "gemma4:12b")
-    assert not m._identity_matches("kimi-k2.6:cloud", "deepseek-v4-pro")
-
-
 def test_run_cell_with_token_limit_is_incomplete_not_contract_failure(monkeypatch, tmp_path):
     m = load_module()
     from benchmark_transport import parse_ollama_response
@@ -264,13 +257,19 @@ def test_run_cell_with_token_limit_is_incomplete_not_contract_failure(monkeypatc
             "keep_alive": "30m",
             "options": {"num_predict": 1200},
         },
+        registered_identity={
+            "name": "glm-5.2:cloud",
+            "remote_model": "glm-5.2",
+            "digest": "test-digest",
+        },
     )
     monkeypatch.setattr(m, "call_ollama", lambda *args, **kwargs: result)
 
     cell = m.run_cell("truncated", tmp_path, m.task_list()[0], "glm-5.2:cloud", trial_index=1, timeout_s=10)
 
     assert cell.status == "incomplete"
-    assert cell.hard_fails == ["output_truncated"]
+    assert cell.hard_fails == []
+    assert cell.incomplete_reasons == ["output_truncated"]
     assert cell.checks["provider_response"]["done_reason"] == "length"
     assert cell.checks["request_controls"]["keep_alive"] == "30m"
     assert cell.checks["request_controls"]["options"]["num_predict"] == 1200
@@ -287,6 +286,39 @@ def test_run_cell_classifies_transport_failure(monkeypatch, tmp_path):
     assert cell.status == "error"
     assert cell.hard_fails == ["transport_unavailable"]
     assert cell.checks["failure_class"] == "transport_unavailable"
+
+
+def test_identity_mismatch_is_retained_in_cell_and_preflight(monkeypatch, tmp_path):
+    from benchmark_transport import ModelIdentityMismatch
+
+    m = load_module()
+    exc = ModelIdentityMismatch(
+        "alias proof unavailable",
+        requested_model="glm-5.2:cloud",
+        returned_model="glm-5.2",
+    )
+
+    def mismatch(*_args, **_kwargs):
+        raise exc
+
+    monkeypatch.setattr(m, "call_ollama", mismatch)
+    cell = m.run_cell(
+        "mismatch", tmp_path, m.task_list()[0], "glm-5.2:cloud",
+        trial_index=1, timeout_s=10,
+    )
+    assert cell.status == "error"
+    assert cell.checks["actual_model"] == "glm-5.2"
+    assert cell.checks["provider_response"] == {
+        "identity_evidence": "mismatch",
+        "requested_model": "glm-5.2:cloud",
+        "returned_model": "glm-5.2",
+        "registered_identity": None,
+    }
+
+    preflight = m.preflight_model("glm-5.2:cloud", timeout_s=10)
+    assert preflight["status"] == "error"
+    assert preflight["actual_model"] == "glm-5.2"
+    assert preflight["provider_response"]["returned_model"] == "glm-5.2"
 
 
 def test_task_filter_and_self_test():
@@ -323,3 +355,13 @@ def test_preflight_only_writes_manifest_before_provider_call(tmp_path, monkeypat
 
     assert result == 0
     assert events == ["manifest", "provider"]
+
+
+def test_skip_preflight_makes_no_preflight_provider_call(tmp_path, monkeypatch):
+    m = load_module()
+    monkeypatch.setattr(m, "ARTIFACTS_DIR", tmp_path)
+    monkeypatch.setattr(m, "require_profile_coverage", lambda models: None)
+    monkeypatch.setattr(m, "build_manifest", lambda **kwargs: {"run_id": kwargs["run_id"]})
+    monkeypatch.setattr(m, "preflight_model", lambda *args, **kwargs: (_ for _ in ()).throw(AssertionError("preflight called")))
+    monkeypatch.setattr(m, "make_schedule", lambda *args, **kwargs: [])
+    assert m.main(["--models", "candidate:cloud", "--tasks", "D01", "--run-id", "skip-preflight", "--skip-preflight"]) == 0

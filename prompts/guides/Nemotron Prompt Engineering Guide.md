@@ -16,6 +16,8 @@ models:
 sources:
   - "https://docs.nvidia.com/nemo/datadesigner/dev-notes/structured-outputs-from-nemotron"
   - "https://deepinfra.com/blog/nvidia-nemotron-3-super-model-overview-guide"
+  - "https://developer.nvidia.com/blog/nvidia-nemotron-3-ultra-powers-faster-more-efficient-reasoning-for-long-running-agents/"
+  - "https://docs.ollama.com/api/openai-compatibility"
 ---
 # NVIDIA Nemotron — Prompting Best Practices
 
@@ -31,6 +33,8 @@ Nemotron should be treated as a long-context, multilingual, structured-output-fr
 
 ## Runtime and prompting rules
 
+For the approved PA-default agentic benchmark, `nemotron-3-ultra:cloud` runs one exact thinking-on lane with top-level `think: true`. This is a selected harness control, not a claim that every Nemotron deployment should reason visibly. Do not switch modes during retries.
+
 | Scenario | Guidance |
 |---|---|
 | JSON / YAML / XML | Provide explicit schema, validate programmatically, and reject malformed output. |
@@ -41,7 +45,7 @@ Nemotron should be treated as a long-context, multilingual, structured-output-fr
 ## PA prompt pattern
 
 ```text
-You are Andrew's PA benchmark candidate.
+You are the PA benchmark candidate.
 Follow the schema exactly. Do not include Markdown fences or commentary.
 If a field is not supported by the prompt facts, use null and include the uncertainty in the designated field.
 Validate your final answer against the schema before returning it.
