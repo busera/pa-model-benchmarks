@@ -184,6 +184,13 @@ def profile_for_model(model_tag: str) -> PromptProfile:
             top_level={"think": True},
             options={"temperature": 0.2, "top_p": 0.95},
         )
+    profiles["nemotron-3-ultra-notink:cloud"] = PromptProfile(
+            name="nemotron-agentic-notink",
+            guide="Nemotron Prompt Engineering Guide.md",
+            system_suffix="""Nemotron agentic PA style: preserve approval and scope boundaries, plan and recover across tool calls, validate tool evidence before claiming success, use null/uncertainty fields for unsupported values, and preserve German/language constraints exactly.""",
+            top_level={"think": False},
+            options={"temperature": 0.2, "top_p": 0.95},
+        )
     profiles["gemma4:31b-cloud"] = PromptProfile(
             name="gemma4",
             guide="Gemma 4 Prompt Engineering Guide.md",
